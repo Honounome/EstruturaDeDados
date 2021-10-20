@@ -1,5 +1,5 @@
 package lista;
-// acabei de colocar isso aqui Eu sou o seu pai
+// acabei
 public class ListaExemplo {
 
     private int[] valores;
