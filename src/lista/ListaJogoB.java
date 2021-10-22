@@ -27,7 +27,6 @@ public class ListaJogoB extends javax.swing.JFrame {
         p_jogo = new javax.swing.JPanel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setPreferredSize(new java.awt.Dimension(616, 639));
         setResizable(false);
 
         p_principal.setPreferredSize(new java.awt.Dimension(616, 639));
@@ -95,11 +94,11 @@ public class ListaJogoB extends javax.swing.JFrame {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(p_principal, javax.swing.GroupLayout.PREFERRED_SIZE, 616, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addComponent(p_principal, javax.swing.GroupLayout.PREFERRED_SIZE, 600, javax.swing.GroupLayout.PREFERRED_SIZE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(p_principal, javax.swing.GroupLayout.PREFERRED_SIZE, 639, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addComponent(p_principal, javax.swing.GroupLayout.PREFERRED_SIZE, 600, javax.swing.GroupLayout.PREFERRED_SIZE)
         );
 
         pack();
@@ -113,22 +112,23 @@ public class ListaJogoB extends javax.swing.JFrame {
         int indice;
         int[] relacao;
         int[] imagens = new int[IMG];
-        int cont = 0;
         boolean par = (alt * larg) % 2 == 0;
 
         javax.swing.JButton[] botoes;
 
         botoes = new javax.swing.JButton[alt * larg - (par ? 0 : 1)];
         relacao = new int[botoes.length];
-        
-        for(int i = 0; i < relacao.length; i++)
+
+        for (int i = 0; i < relacao.length; i++) {
             relacao[i] = i;
+        }
         relacao = shuffle(relacao);
-        
-        for(int i = 0; i < imagens.length; i++)
+
+        for (int i = 0; i < imagens.length; i++) {
             imagens[i] = i;
+        }
         imagens = shuffle(imagens);
-        
+
         tela("jogo");
 
         for (int i = 0; i < alt; i++) {
@@ -142,20 +142,33 @@ public class ListaJogoB extends javax.swing.JFrame {
                 }
                 botoes[indice] = new javax.swing.JButton();
                 botoes[indice].setBackground(new java.awt.Color(255, 255, 255));
-                botoes[indice].setFocusable(false);;
+                botoes[indice].setFocusable(false);
+                botoes[indice].setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+                botoes[indice].addActionListener(new java.awt.event.ActionListener() {
+                    public void actionPerformed(java.awt.event.ActionEvent evt) {
+                        javax.swing.JButton botao = (javax.swing.JButton) evt.getSource();
+                        
+                        if(botao.getIcon() == null) {
+                            botao.setIcon(new ImageIcon(getClass().getResource("/lista/imagens/" + imagens[encontrarBotao(botao)] + ".png")));
+                        }
+                        
+                    }
+                });
                 p_jogo.add(botoes[indice], new org.netbeans.lib.awtextra.AbsoluteConstraints(ESP * (j + 1) + x * j, ESP * (i + 1) + y * i, x, y));
             }
         }
-        
-        System.out.println((x < y)? x : -1);
-        System.out.println((x > y)? y : -1);
-        
-        for(int i = 0; i < botoes.length / 2; i++) {
-            ImageIcon imgCarta = new ImageIcon(getClass().getResource("/lista/teste/" + (("" + imagens[i]).length() == 1? "0" + imagens[i] : imagens[i]) + ".png"));
-            imgCarta.setImage(imgCarta.getImage().getScaledInstance(((x < y || x == y)? x-10 : -1), ((x > y || x == y)? y-10 : -1), 1));
-            botoes[relacao[cont++]].setIcon(imgCarta);
-            botoes[relacao[cont++]].setIcon(imgCarta);
+
+        System.out.println((x < y) ? x : -1);
+        System.out.println((x > y) ? y : -1);
+
+        for (int i = 0; i < botoes.length / 2; i++) {
+            ImageIcon imgCarta = new ImageIcon(getClass().getResource("/lista/imagens/" + imagens[i] + ".png"));
+            imgCarta.setImage(imgCarta.getImage().getScaledInstance(((x < y || x == y) ? x - 10 : -1), ((x > y || x == y) ? y - 10 : -1), 1));
+            botoes[relacao[i*2]].setIcon(imgCarta);
+            botoes[relacao[i*2+1]].setIcon(imgCarta);
         }
+        
+        
     }//GEN-LAST:event_b_jogarActionPerformed
 
     private void t_alturaKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_t_alturaKeyTyped
@@ -168,11 +181,14 @@ public class ListaJogoB extends javax.swing.JFrame {
             evt.consume();
     }//GEN-LAST:event_t_larguraKeyTyped
     
+    // criar um método que retorne a posição do botao passado por parâmetro, dentro do vetor botoes
+    private int encontrarBotao(javax.swing.JButton )
+    
     private void tela(String nome) {
         java.awt.CardLayout cl = (java.awt.CardLayout) p_principal.getLayout();
         cl.show(p_principal, nome);
     }
-    
+
     private static int[] shuffle(int[] vet) {
         int[] sort = vet;
         int[] aux;
