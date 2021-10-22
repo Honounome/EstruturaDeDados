@@ -149,19 +149,12 @@ public class ListaJogoB extends javax.swing.JFrame {
                 botoes[indice].addActionListener(new java.awt.event.ActionListener() {
                     public void actionPerformed(java.awt.event.ActionEvent evt) {
                         javax.swing.JButton botao = (javax.swing.JButton) evt.getSource();
-                        
-                        /*if(botao.getIcon() == null) {
-                            botao.setIcon(new ImageIcon(getClass().getResource("/lista/imagens/" + imagens[encontrarBotao(botao)] + ".png")));
-                        }*/
-                        
+//                        botao.setIcon(defaultIcon);
                     }
                 });
                 p_jogo.add(botoes[indice], new org.netbeans.lib.awtextra.AbsoluteConstraints(ESP * (j + 1) + x * j, ESP * (i + 1) + y * i, x, y));
             }
         }
-
-        System.out.println((x < y) ? x : -1);
-        System.out.println((x > y) ? y : -1);
 
         for (int i = 0; i < botoes.length / 2; i++) {
             ImageIcon imgCarta = new ImageIcon(getClass().getResource("/lista/imagens/" + imagens[i] + ".png"));
@@ -187,7 +180,6 @@ public class ListaJogoB extends javax.swing.JFrame {
     private int encontrarBotao(javax.swing.JButton b){
         for(int i=0; i<botoes.length; i++){
             if(botoes[i].equals(b)){
-                //break;
                 return i;
             }
         }
