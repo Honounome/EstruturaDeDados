@@ -1,6 +1,12 @@
 package lista;
 
+import java.awt.Color;
+import javax.swing.ImageIcon;
+
 public class ListaJogoB extends javax.swing.JFrame {
+
+    private final int ESP = 10;
+    private final int IMG = 18;
 
     public ListaJogoB() {
         initComponents();
@@ -12,79 +18,199 @@ public class ListaJogoB extends javax.swing.JFrame {
 
         p_principal = new javax.swing.JPanel();
         p_menu = new javax.swing.JPanel();
-        jLabel1 = new javax.swing.JLabel();
-        jLabel2 = new javax.swing.JLabel();
-        p_facil = new javax.swing.JPanel();
-        p_medio = new javax.swing.JPanel();
-        p_dificil = new javax.swing.JPanel();
+        l_titulo = new javax.swing.JLabel();
+        l_tamanho = new javax.swing.JLabel();
+        t_altura = new javax.swing.JTextField();
+        t_largura = new javax.swing.JTextField();
+        l_X = new javax.swing.JLabel();
+        b_jogar = new javax.swing.JButton();
+        p_jogo = new javax.swing.JPanel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setPreferredSize(new java.awt.Dimension(616, 639));
+        setResizable(false);
 
+        p_principal.setPreferredSize(new java.awt.Dimension(616, 639));
         p_principal.setLayout(new java.awt.CardLayout());
 
+        p_menu.setMinimumSize(new java.awt.Dimension(616, 639));
+        p_menu.setPreferredSize(new java.awt.Dimension(616, 639));
         p_menu.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
-        jLabel1.setFont(new java.awt.Font("Segoe UI", 0, 36)); // NOI18N
-        jLabel1.setText("Jogo da Memória");
-        p_menu.add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(143, 104, -1, -1));
+        l_titulo.setFont(new java.awt.Font("Rockwell", 0, 70)); // NOI18N
+        l_titulo.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        l_titulo.setText("Jogo da Memória");
+        l_titulo.setFocusable(false);
+        p_menu.add(l_titulo, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 100, 600, -1));
 
-        jLabel2.setText("jLabel2");
-        p_menu.add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(264, 288, -1, -1));
+        l_tamanho.setFont(new java.awt.Font("MS UI Gothic", 0, 24)); // NOI18N
+        l_tamanho.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        l_tamanho.setText("Selecione o tamanho do grid [2 a 6]:");
+        l_tamanho.setFocusable(false);
+        p_menu.add(l_tamanho, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 250, 600, -1));
+
+        t_altura.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        t_altura.setText("2");
+        t_altura.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                t_alturaKeyTyped(evt);
+            }
+        });
+        p_menu.add(t_altura, new org.netbeans.lib.awtextra.AbsoluteConstraints(250, 300, 40, -1));
+
+        t_largura.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        t_largura.setText("2");
+        t_largura.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                t_larguraKeyTyped(evt);
+            }
+        });
+        p_menu.add(t_largura, new org.netbeans.lib.awtextra.AbsoluteConstraints(310, 300, 40, -1));
+
+        l_X.setFont(new java.awt.Font("MS UI Gothic", 0, 18)); // NOI18N
+        l_X.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        l_X.setText("X");
+        l_X.setFocusable(false);
+        l_X.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        p_menu.add(l_X, new org.netbeans.lib.awtextra.AbsoluteConstraints(290, 305, 20, -1));
+
+        b_jogar.setFont(new java.awt.Font("Arial Rounded MT Bold", 0, 36)); // NOI18N
+        b_jogar.setText("JOGAR");
+        b_jogar.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        b_jogar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                b_jogarActionPerformed(evt);
+            }
+        });
+        p_menu.add(b_jogar, new org.netbeans.lib.awtextra.AbsoluteConstraints(175, 360, 250, -1));
 
         p_principal.add(p_menu, "menu");
 
-        javax.swing.GroupLayout p_facilLayout = new javax.swing.GroupLayout(p_facil);
-        p_facil.setLayout(p_facilLayout);
-        p_facilLayout.setHorizontalGroup(
-            p_facilLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 600, Short.MAX_VALUE)
-        );
-        p_facilLayout.setVerticalGroup(
-            p_facilLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 600, Short.MAX_VALUE)
-        );
-
-        p_principal.add(p_facil, "facil");
-
-        javax.swing.GroupLayout p_medioLayout = new javax.swing.GroupLayout(p_medio);
-        p_medio.setLayout(p_medioLayout);
-        p_medioLayout.setHorizontalGroup(
-            p_medioLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 600, Short.MAX_VALUE)
-        );
-        p_medioLayout.setVerticalGroup(
-            p_medioLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 600, Short.MAX_VALUE)
-        );
-
-        p_principal.add(p_medio, "medio");
-
-        javax.swing.GroupLayout p_dificilLayout = new javax.swing.GroupLayout(p_dificil);
-        p_dificil.setLayout(p_dificilLayout);
-        p_dificilLayout.setHorizontalGroup(
-            p_dificilLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 600, Short.MAX_VALUE)
-        );
-        p_dificilLayout.setVerticalGroup(
-            p_dificilLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 600, Short.MAX_VALUE)
-        );
-
-        p_principal.add(p_dificil, "dificil");
+        p_jogo.setMinimumSize(new java.awt.Dimension(616, 639));
+        p_jogo.setPreferredSize(new java.awt.Dimension(616, 639));
+        p_jogo.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+        p_principal.add(p_jogo, "jogo");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(p_principal, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(p_principal, javax.swing.GroupLayout.PREFERRED_SIZE, 616, javax.swing.GroupLayout.PREFERRED_SIZE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(p_principal, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(p_principal, javax.swing.GroupLayout.PREFERRED_SIZE, 639, javax.swing.GroupLayout.PREFERRED_SIZE)
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void b_jogarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_b_jogarActionPerformed
+        int alt = Integer.parseInt(t_altura.getText());
+        int larg = Integer.parseInt(t_largura.getText());
+        int y = (600 - ESP * (alt + 1)) / alt;
+        int x = (600 - ESP * (larg + 1)) / larg;
+        int indice;
+        int[] relacao;
+        int[] imagens = new int[IMG];
+        int cont = 0;
+        boolean par = (alt * larg) % 2 == 0;
+
+        javax.swing.JButton[] botoes;
+
+        botoes = new javax.swing.JButton[alt * larg - (par ? 0 : 1)];
+        relacao = new int[botoes.length];
+        
+        for(int i = 0; i < relacao.length; i++)
+            relacao[i] = i;
+        relacao = shuffle(relacao);
+        
+        for(int i = 0; i < imagens.length; i++)
+            imagens[i] = i;
+        imagens = shuffle(imagens);
+        
+        tela("jogo");
+
+        for (int i = 0; i < alt; i++) {
+            for (int j = 0; j < larg; j++) {
+                indice = i * larg + j;
+                if (!par && indice >= botoes.length / 2) {
+                    if (indice == botoes.length / 2) {
+                        continue;
+                    }
+                    indice--;
+                }
+                botoes[indice] = new javax.swing.JButton();
+                botoes[indice].setBackground(new java.awt.Color(255, 255, 255));
+                botoes[indice].setFocusable(false);;
+                p_jogo.add(botoes[indice], new org.netbeans.lib.awtextra.AbsoluteConstraints(ESP * (j + 1) + x * j, ESP * (i + 1) + y * i, x, y));
+            }
+        }
+        
+        System.out.println((x < y)? x : -1);
+        System.out.println((x > y)? y : -1);
+        
+        for(int i = 0; i < botoes.length / 2; i++) {
+            ImageIcon imgCarta = new ImageIcon(getClass().getResource("/lista/teste/" + (("" + imagens[i]).length() == 1? "0" + imagens[i] : imagens[i]) + ".png"));
+            imgCarta.setImage(imgCarta.getImage().getScaledInstance(((x < y || x == y)? x-10 : -1), ((x > y || x == y)? y-10 : -1), 1));
+            botoes[relacao[cont++]].setIcon(imgCarta);
+            botoes[relacao[cont++]].setIcon(imgCarta);
+        }
+    }//GEN-LAST:event_b_jogarActionPerformed
+
+    private void t_alturaKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_t_alturaKeyTyped
+        if (!isNumeric("" + evt.getKeyChar()) || Integer.parseInt(t_altura.getText() + evt.getKeyChar()) > 6 || Integer.parseInt(t_altura.getText() + evt.getKeyChar()) < 2)
+            evt.consume();
+    }//GEN-LAST:event_t_alturaKeyTyped
+
+    private void t_larguraKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_t_larguraKeyTyped
+        if (!isNumeric("" + evt.getKeyChar()) || Integer.parseInt(t_largura.getText() + evt.getKeyChar()) > 6 || Integer.parseInt(t_largura.getText() + evt.getKeyChar()) < 2)
+            evt.consume();
+    }//GEN-LAST:event_t_larguraKeyTyped
+    
+    private void tela(String nome) {
+        java.awt.CardLayout cl = (java.awt.CardLayout) p_principal.getLayout();
+        cl.show(p_principal, nome);
+    }
+    
+    private static int[] shuffle(int[] vet) {
+        int[] sort = vet;
+        int[] aux;
+        int[] fim = new int[vet.length];
+        int pos;
+
+        for (int i = 0; i < vet.length - 1; i++) {
+            pos = (int) (Math.random() * sort.length);
+            fim[i] = sort[pos];
+            aux = new int[sort.length - 1];
+            for (int j = 0; j <= aux.length; j++) {
+                if (j == pos) {
+                    continue;
+                }
+                if (j > pos) {
+                    aux[j - 1] = sort[j];
+                } else {
+                    aux[j] = sort[j];
+                }
+            }
+            sort = aux;
+        }
+        fim[fim.length - 1] = sort[0];
+
+        return fim;
+    }
+
+    private static boolean isNumeric(String strNum) {
+        if (strNum == null) {
+            return false;
+        }
+        try {
+            int d = Integer.parseInt(strNum);
+        } catch (NumberFormatException nfe) {
+            return false;
+        }
+        return true;
+    }
 
     public static void main(String args[]) {
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
@@ -118,12 +244,14 @@ public class ListaJogoB extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel2;
-    private javax.swing.JPanel p_dificil;
-    private javax.swing.JPanel p_facil;
-    private javax.swing.JPanel p_medio;
+    private javax.swing.JButton b_jogar;
+    private javax.swing.JLabel l_X;
+    private javax.swing.JLabel l_tamanho;
+    private javax.swing.JLabel l_titulo;
+    private javax.swing.JPanel p_jogo;
     private javax.swing.JPanel p_menu;
     private javax.swing.JPanel p_principal;
+    private javax.swing.JTextField t_altura;
+    private javax.swing.JTextField t_largura;
     // End of variables declaration//GEN-END:variables
 }
