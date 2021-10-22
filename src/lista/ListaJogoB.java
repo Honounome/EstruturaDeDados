@@ -11,6 +11,8 @@ public class ListaJogoB extends javax.swing.JFrame {
     public ListaJogoB() {
         initComponents();
     }
+    
+    javax.swing.JButton[] botoes;
 
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
@@ -114,7 +116,7 @@ public class ListaJogoB extends javax.swing.JFrame {
         int[] imagens = new int[IMG];
         boolean par = (alt * larg) % 2 == 0;
 
-        javax.swing.JButton[] botoes;
+        //javax.swing.JButton[] botoes;
 
         botoes = new javax.swing.JButton[alt * larg - (par ? 0 : 1)];
         relacao = new int[botoes.length];
@@ -148,9 +150,9 @@ public class ListaJogoB extends javax.swing.JFrame {
                     public void actionPerformed(java.awt.event.ActionEvent evt) {
                         javax.swing.JButton botao = (javax.swing.JButton) evt.getSource();
                         
-                        if(botao.getIcon() == null) {
+                        /*if(botao.getIcon() == null) {
                             botao.setIcon(new ImageIcon(getClass().getResource("/lista/imagens/" + imagens[encontrarBotao(botao)] + ".png")));
-                        }
+                        }*/
                         
                     }
                 });
@@ -182,7 +184,15 @@ public class ListaJogoB extends javax.swing.JFrame {
     }//GEN-LAST:event_t_larguraKeyTyped
     
     // criar um método que retorne a posição do botao passado por parâmetro, dentro do vetor botoes
-    private int encontrarBotao(javax.swing.JButton )
+    private int encontrarBotao(javax.swing.JButton b){
+        for(int i=0; i<botoes.length; i++){
+            if(botoes[i].equals(b)){
+                //break;
+                return i;
+            }
+        }
+        return -1;
+    }
     
     private void tela(String nome) {
         java.awt.CardLayout cl = (java.awt.CardLayout) p_principal.getLayout();
