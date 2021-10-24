@@ -11,18 +11,20 @@ import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
 import javax.sound.sampled.FloatControl;
 
-public class ListaJogoB extends javax.swing.JFrame {
+public class ListaJogoPOO extends javax.swing.JFrame {
 
     private final int ESP = 10;
     private final int IMG = 18;
     int[] imagens = new int[IMG];
     int[] relacao;
-    int x, y, larg, alt, vitoria, erros = 0, check = -1;
+    int x, y, larg, alt, vitoria, erros = 0;
+    Botao check;
     long tempoEmMili;
     Timer virarCartas, mostrarCartas, terminar;
     javax.swing.JButton[] botoes;
+    Botao[] btns;
 
-    public ListaJogoB() {
+    public ListaJogoPOO() {
         initComponents();
         l_mensagem.setText(l_mensagem.getText() + IMG * 2);
         tocarSom("bgm", true);
@@ -42,7 +44,7 @@ public class ListaJogoB extends javax.swing.JFrame {
                 }
             }
         });
-        
+
         terminar = new Timer(3000, new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
                 tela("final");
@@ -201,74 +203,106 @@ public class ListaJogoB extends javax.swing.JFrame {
         if ((alt * larg > IMG * 2) || (alt * larg < 2)) {
             l_mensagem.setForeground(Color.red);
             l_mensagem.setFont(new Font(l_mensagem.getFont().getFontName(), Font.BOLD, l_mensagem.getFont().getSize() + (l_mensagem.getFont().getSize() < 24 ? 1 : 0)));
-            final Runnable runnable
-                    = (Runnable) Toolkit.getDefaultToolkit().getDesktopProperty("win.sound.default");
-            if (runnable != null) {
+            final Runnable runnable = (Runnable) Toolkit.getDefaultToolkit().getDesktopProperty("win.sound.default");
+            if (runnable != null)
                 runnable.run();
-            }
+            
             return;
         }
 
         y = (600 - ESP * (alt + 1)) / alt;
         x = (600 - ESP * (larg + 1)) / larg;
-        int indice;
         boolean par = (alt * larg) % 2 == 0;
 
-        botoes = new javax.swing.JButton[alt * larg - (par ? 0 : 1)];
-        relacao = new int[botoes.length];
-
-        for (int i = 0; i < relacao.length; i++) {
-            relacao[i] = i;
+        btns = new Botao[alt * larg - (par ? 0 : 1)];
+        
+        for(int i = 0; i < btns.length; i++) {
+            btns[i] = new Botao();
         }
-        relacao = embaralhar(relacao);
+        
+        relacao = new int[btns.length];
 
-        for (int i = 0; i < imagens.length; i++) {
+        for (int i = 0; i < imagens.length; i++)
             imagens[i] = i;
-        }
+        
         imagens = embaralhar(imagens);
         
-        vitoria = botoes.length/2;
+        vitoria = btns.length / 2;
+
+        for (int i = 0; i < relacao.length / 2; i++)
+            for (int j = 0; j < 2; j++)
+                relacao[i * 2 + j] = imagens[i];
+
+        relacao = embaralhar(relacao);
 
         tela("jogo");
 
         for (int i = 0; i < alt; i++) {
             for (int j = 0; j < larg; j++) {
-                indice = i * larg + j;
-                if (!par && indice >= botoes.length / 2) {
-                    if (indice == botoes.length / 2) {
-                        continue;
-                    }
-                    indice--;
-                }
-                botoes[indice] = new javax.swing.JButton();
-                botoes[indice].setBackground(new java.awt.Color(255, 255, 255));
-                botoes[indice].setFocusable(false);
-                botoes[indice].setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-                botoes[indice].addActionListener(new java.awt.event.ActionListener() {
-                    public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btns[i * larg + j].setBotao(new JButton());
+                JButton bAux = btns[i * larg + j].getBotao();
+                bAux.setBackground(Color.white);
+                bAux.setFocusable(false);
+                bAux.setCursor(new Cursor(Cursor.HAND_CURSOR));
+                bAux.addActionListener(new ActionListener() {
+                    public void actionPerformed(ActionEvent evt) {
                         cliqueBotao(evt);
                     }
                 });
-                p_jogo.add(botoes[indice], new org.netbeans.lib.awtextra.AbsoluteConstraints(ESP * (j + 1) + x * j, ESP * (i + 1) + y * i, x, y));
+                p_jogo.add(bAux, new org.netbeans.lib.awtextra.AbsoluteConstraints(ESP * (j + 1) + x * j, ESP * (i + 1) + y * i, x, y));
             }
         }
-        
-        mostrarCartas = new Timer(botoes.length * 150, new ActionListener() {
+//
+//        for (int i = 0; i < alt; i++) {
+//            for (int j = 0; j < larg; j++) {
+//
+//            }
+//        }
+//        for (int i = 0; i < alt; i++) {
+//            for (int j = 0; j < larg; j++) {
+//                indice = i * larg + j;
+//                if (!par && indice >= botoes.length / 2) {
+//                    if (indice == botoes.length / 2) {
+//                        continue;
+//                    }
+//                    indice--;
+//                }
+//                botoes[indice] = new javax.swing.JButton();
+//                botoes[indice].setBackground(new java.awt.Color(255, 255, 255));
+//                botoes[indice].setFocusable(false);
+//                botoes[indice].setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+//                botoes[indice].addActionListener(new java.awt.event.ActionListener() {
+//                    public void actionPerformed(java.awt.event.ActionEvent evt) {
+//                        cliqueBotao(evt);
+//                    }
+//                });
+//                p_jogo.add(botoes[indice], new org.netbeans.lib.awtextra.AbsoluteConstraints(ESP * (j + 1) + x * j, ESP * (i + 1) + y * i, x, y));
+//            }
+//        }
+
+        mostrarCartas = new Timer(btns.length * 150, new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
-                for(int i = 0; i < botoes.length; i++) {
-                    botoes[i].setIcon(null);
+                for (Botao btn : btns) {
+                    btn.esconderImagem();
                 }
                 mostrarCartas.stop();
             }
         });
 
-        for (int i = 0; i < botoes.length / 2; i++) {
-            ImageIcon imgCarta = new ImageIcon(getClass().getResource("/lista/imagens/" + imagens[i] + ".png"));
-            imgCarta.setImage(imgCarta.getImage().getScaledInstance(((x < y || x == y) ? x - 10 : -1), ((x > y || x == y) ? y - 10 : -1), 1));
-            botoes[relacao[i * 2]].setIcon(imgCarta);
-            botoes[relacao[i * 2 + 1]].setIcon(imgCarta);
+        for (int i = 0; i < relacao.length; i++) {
+            ImageIcon imagem = new ImageIcon(getClass().getResource("/lista/imagens/" + imagens[relacao[i]] + ".png"));
+            imagem.setImage(imagem.getImage().getScaledInstance(((x < y || x == y) ? x - 10 : -1), ((x > y || x == y) ? y - 10 : -1), 1));
+            btns[i].setImagem(imagem);
+            btns[i].mostrarImagem();
         }
-        
+//        
+//        for (int i = 0; i < botoes.length / 2; i++) {
+//            ImageIcon imgCarta = new ImageIcon(getClass().getResource("/lista/imagens/" + imagens[i] + ".png"));
+//            imgCarta.setImage(imgCarta.getImage().getScaledInstance(((x < y || x == y) ? x - 10 : -1), ((x > y || x == y) ? y - 10 : -1), 1));
+//            botoes[relacao[i * 2]].setIcon(imgCarta);
+//            botoes[relacao[i * 2 + 1]].setIcon(imgCarta);
+//        }
+
         mostrarCartas.start();
 
         requestFocus();
@@ -285,51 +319,75 @@ public class ListaJogoB extends javax.swing.JFrame {
     }//GEN-LAST:event_t_larguraKeyTyped
 
     private void cliqueBotao(java.awt.event.ActionEvent evt) {
-        javax.swing.JButton botao = (javax.swing.JButton) evt.getSource();
-        
+        Botao botao = encontrar((JButton) evt.getSource());
+
         if (tempoEmMili == 0) {
             tempoEmMili = System.currentTimeMillis();
         }
-        
-        if (botao.getIcon() == null && (virarCartas == null ? true : !virarCartas.isRunning()) && !mostrarCartas.isRunning()) {
+
+        if (!botao.taMostrando() && (virarCartas == null ? true : !virarCartas.isRunning()) && !mostrarCartas.isRunning()) {
             tocarSom("carta");
-            int numBotao = (int) (encontrarBotao(botao) * 2);
-            if (botao.getIcon() == null) {
-                ImageIcon imgCarta = new ImageIcon(getClass().getResource("/lista/imagens/" + imagens[numBotao / 2] + ".png"));
-                imgCarta.setImage(imgCarta.getImage().getScaledInstance(((x < y || x == y) ? x - 10 : -1), ((x > y || x == y) ? y - 10 : -1), 1));
-                botao.setIcon(imgCarta);
-            } else {
-                botao.setIcon(null);
-            }
             
-            if (check < 0) {
-                check = numBotao;
-                System.out.println(numBotao + " " + check);
+            botao.mostrarImagem();
+//            int numBotao = (int) (encontrarBotao(botao) * 2);
+//            if (botao.getIcon() == null) {
+//                ImageIcon imgCarta = new ImageIcon(getClass().getResource("/lista/imagens/" + imagens[numBotao / 2] + ".png"));
+//                imgCarta.setImage(imgCarta.getImage().getScaledInstance(((x < y || x == y) ? x - 10 : -1), ((x > y || x == y) ? y - 10 : -1), 1));
+//                botao.setIcon(imgCarta);
+//            } else {
+//                botao.setIcon(null);
+//            }
+
+            if (check == null) { 
+                check = botao;
             } else {
-                System.out.println(numBotao + " " + check);
-                if (check / 2 == numBotao / 2) {
+                System.out.println(check.getImagem());
+                System.out.println(botao.getImagem());
+                if (check.getImagem().toString().equals(botao.getImagem().toString())) {
                     tocarSom("sucesso", 0.5f);
                     vitoria--;
-                    check = -1;
+                    check = null;
                 } else {
                     tocarSom("erro", 0.5f);
                     erros++;
                     virarCartas = new Timer(500, new ActionListener() {
                         public void actionPerformed(ActionEvent evt) {
-                            botao.setIcon(null);
-                            botoes[relacao[check]].setIcon(null);
-                            check = -1;
-                            System.out.println("Check = -1");
+                            check.esconderImagem();
+                            botao.esconderImagem();
+                            check = null;
                             virarCartas.stop();
                         }
                     });
                     virarCartas.start();
                 }
             }
-            
-            if(vitoria == 0) {
+//            if (check < 0) {
+//                check = numBotao;
+//                System.out.println(numBotao + " " + check);
+//            } else {
+//                System.out.println(numBotao + " " + check);
+//                if (check / 2 == numBotao / 2) {
+//                    tocarSom("sucesso", 0.5f);
+//                    check = -1;
+//                } else {
+//                    tocarSom("erro", 0.5f);
+//                    erros++;
+//                    virarCartas = new Timer(500, new ActionListener() {
+//                        public void actionPerformed(ActionEvent evt) {
+//                            botao.setIcon(null);
+//                            botoes[relacao[check]].setIcon(null);
+//                            check = -1;
+//                            System.out.println("Check = -1");
+//                            virarCartas.stop();
+//                        }
+//                    });
+//                    virarCartas.start();
+//                }
+//            }
+
+            if (vitoria == 0) {
                 tocarSom("vitoria", 0.1f);
-                l_tempo.setText(String.format("%.3f", (double) (System.currentTimeMillis() - tempoEmMili)/1000));
+                l_tempo.setText(String.format("%.3f", (double) (System.currentTimeMillis() - tempoEmMili) / 1000));
                 tempoEmMili = 0;
                 l_erros.setText(l_erros.getText() + erros);
                 erros = 0;
@@ -339,17 +397,25 @@ public class ListaJogoB extends javax.swing.JFrame {
     }
 
     // criar um método que retorne a posição do botao passado por parâmetro, dentro do vetor botoes
-    private double encontrarBotao(javax.swing.JButton b) {
-        for (int i = 0; i < botoes.length; i++) {
-            if (botoes[i].equals(b)) {
-                for (int j = 0; j < relacao.length; j++) {
-                    if (relacao[j] == i) {
-                        return (double) j / 2;
-                    }
-                }
-            }
-        }
-        return -1;
+//    private double encontrarBotao(javax.swing.JButton b) {
+//        for (int i = 0; i < botoes.length; i++) {
+//            if (botoes[i].equals(b)) {
+//                for (int j = 0; j < relacao.length; j++) {
+//                    if (relacao[j] == i) {
+//                        return (double) j / 2;
+//                    }
+//                }
+//            }
+//        }
+//        return -1;
+//    }
+    
+    private Botao encontrar(JButton b) {
+        for (Botao btn : btns)
+            if (b.equals(btn.getBotao()))
+                return btn;
+        
+        return null;
     }
 
     private void tela(String nome) {
@@ -439,20 +505,22 @@ public class ListaJogoB extends javax.swing.JFrame {
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(ListaJogoB.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(ListaJogoPOO.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(ListaJogoB.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(ListaJogoPOO.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(ListaJogoB.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(ListaJogoPOO.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(ListaJogoB.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(ListaJogoPOO.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
+        //</editor-fold>
+        //</editor-fold>
         //</editor-fold>
         //</editor-fold>
 
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new ListaJogoB().setVisible(true);
+                new ListaJogoPOO().setVisible(true);
             }
         });
     }
