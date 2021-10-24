@@ -17,11 +17,11 @@ public class ListaJogoPOO extends javax.swing.JFrame {
     private final int IMG = 18;
     int[] imagens = new int[IMG];
     int[] relacao;
-    int x, y, larg, alt, vitoria, erros = 0;
+    int x, y, larg, alt, vitoria, indice, erros = 0;
     Botao check;
     long tempoEmMili;
     Timer virarCartas, mostrarCartas, terminar;
-    javax.swing.JButton[] botoes;
+//    JButton[] botoes;
     Botao[] btns;
 
     public ListaJogoPOO() {
@@ -36,7 +36,7 @@ public class ListaJogoPOO extends javax.swing.JFrame {
                     l_mensagem.setForeground(Color.black);
                     tela("menu");
                     for (Component c : p_jogo.getComponents()) {
-                        if (c instanceof javax.swing.JButton) {
+                        if (c instanceof JButton) {
                             p_jogo.remove(c);
                         }
                     }
@@ -239,17 +239,22 @@ public class ListaJogoPOO extends javax.swing.JFrame {
 
         for (int i = 0; i < alt; i++) {
             for (int j = 0; j < larg; j++) {
-                btns[i * larg + j].setBotao(new JButton());
-                JButton bAux = btns[i * larg + j].getBotao();
-                bAux.setBackground(Color.white);
-                bAux.setFocusable(false);
-                bAux.setCursor(new Cursor(Cursor.HAND_CURSOR));
-                bAux.addActionListener(new ActionListener() {
+                indice = i * larg + j;
+                if (!par && indice >= btns.length / 2) {
+                    if (indice == btns.length / 2) {
+                        continue;
+                    }
+                    indice--;
+                }
+                btns[indice].getBotao().setBackground(Color.white);
+                btns[indice].getBotao().setFocusable(false);
+                btns[indice].getBotao().setCursor(new Cursor(Cursor.HAND_CURSOR));
+                btns[indice].getBotao().addActionListener(new ActionListener() {
                     public void actionPerformed(ActionEvent evt) {
                         cliqueBotao(evt);
                     }
                 });
-                p_jogo.add(bAux, new org.netbeans.lib.awtextra.AbsoluteConstraints(ESP * (j + 1) + x * j, ESP * (i + 1) + y * i, x, y));
+                p_jogo.add(btns[indice].getBotao(), new org.netbeans.lib.awtextra.AbsoluteConstraints(ESP * (j + 1) + x * j, ESP * (i + 1) + y * i, x, y));
             }
         }
 //
