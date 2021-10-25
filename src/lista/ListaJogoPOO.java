@@ -1,57 +1,68 @@
 package lista;
 
-import java.awt.*;
+import java.awt.CardLayout;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Font;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.io.BufferedInputStream;
-import javax.swing.*;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
 import javax.sound.sampled.FloatControl;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.Timer;
 
-public class ListaJogoPOO extends javax.swing.JFrame {
+public class ListaJogoPOO extends JFrame {
 
     private final int ESP = 10;
-    private final int IMG = 18;
+    private final int IMG = new java.io.File("src/lista/imagens/").listFiles().length;
+    long tempoEmMili;
     int[] imagens = new int[IMG];
     int[] relacao;
-    int x, y, larg, alt, vitoria, indice, erros = 0;
-    Botao check;
-    long tempoEmMili;
+    int x, y, larg, alt, vitoria, index, erros = 0;
     Timer virarCartas, mostrarCartas, terminar;
-//    JButton[] botoes;
+    Botao check;
     Botao[] btns;
 
     public ListaJogoPOO() {
         initComponents();
-        l_mensagem.setText(l_mensagem.getText() + IMG * 2);
-        tocarSom("bgm", true);
+        tocarSom("bgm", true, 0.075f);
+        iniciar();
 
-        addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyPressed(java.awt.event.KeyEvent evt) {
+        addKeyListener(new KeyAdapter() {
+            public void keyPressed(KeyEvent evt) {
                 if ((evt.getKeyCode() == KeyEvent.VK_R) && !terminar.isRunning()) {
-                    l_mensagem.setFont(new Font(l_mensagem.getFont().getFontName(), Font.PLAIN, 18));
-                    l_mensagem.setForeground(Color.black);
-                    tela("menu");
-                    for (Component c : p_jogo.getComponents()) {
-                        if (c instanceof JButton) {
-                            p_jogo.remove(c);
-                        }
-                    }
-                    l_erros.setText("Quantidade de erros: ");
+                    iniciar();
                 }
             }
         });
 
-        terminar = new Timer(3000, new ActionListener() {
-            public void actionPerformed(ActionEvent evt) {
-                tela("final");
-                terminar.stop();
+        t_altura.addKeyListener(new KeyAdapter() {
+            public void keyPressed(KeyEvent evt) {
+                if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
+                    jogar();
+                }
             }
         });
 
+        t_largura.addKeyListener(new KeyAdapter() {
+            public void keyPressed(KeyEvent evt) {
+                if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
+                    jogar();
+                }
+            }
+        });
+
+        terminar = new Timer(3000, (ActionEvent evt) -> {
+            tela("final");
+            terminar.stop();
+        });
     }
 
     @SuppressWarnings("unchecked")
@@ -197,120 +208,7 @@ public class ListaJogoPOO extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void b_jogarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_b_jogarActionPerformed
-        alt = Integer.parseInt(t_altura.getText());
-        larg = Integer.parseInt(t_largura.getText());
-
-        if ((alt * larg > IMG * 2) || (alt * larg < 2)) {
-            l_mensagem.setForeground(Color.red);
-            l_mensagem.setFont(new Font(l_mensagem.getFont().getFontName(), Font.BOLD, l_mensagem.getFont().getSize() + (l_mensagem.getFont().getSize() < 24 ? 1 : 0)));
-            final Runnable runnable = (Runnable) Toolkit.getDefaultToolkit().getDesktopProperty("win.sound.default");
-            if (runnable != null)
-                runnable.run();
-            
-            return;
-        }
-
-        y = (600 - ESP * (alt + 1)) / alt;
-        x = (600 - ESP * (larg + 1)) / larg;
-        boolean par = (alt * larg) % 2 == 0;
-
-        btns = new Botao[alt * larg - (par ? 0 : 1)];
-        
-        for(int i = 0; i < btns.length; i++) {
-            btns[i] = new Botao();
-        }
-        
-        relacao = new int[btns.length];
-
-        for (int i = 0; i < imagens.length; i++)
-            imagens[i] = i;
-        
-        imagens = embaralhar(imagens);
-        
-        vitoria = btns.length / 2;
-
-        for (int i = 0; i < relacao.length / 2; i++)
-            for (int j = 0; j < 2; j++)
-                relacao[i * 2 + j] = imagens[i];
-
-        relacao = embaralhar(relacao);
-
-        tela("jogo");
-
-        for (int i = 0; i < alt; i++) {
-            for (int j = 0; j < larg; j++) {
-                indice = i * larg + j;
-                if (!par && indice >= btns.length / 2) {
-                    if (indice == btns.length / 2) {
-                        continue;
-                    }
-                    indice--;
-                }
-                btns[indice].getBotao().setBackground(Color.white);
-                btns[indice].getBotao().setFocusable(false);
-                btns[indice].getBotao().setCursor(new Cursor(Cursor.HAND_CURSOR));
-                btns[indice].getBotao().addActionListener(new ActionListener() {
-                    public void actionPerformed(ActionEvent evt) {
-                        cliqueBotao(evt);
-                    }
-                });
-                p_jogo.add(btns[indice].getBotao(), new org.netbeans.lib.awtextra.AbsoluteConstraints(ESP * (j + 1) + x * j, ESP * (i + 1) + y * i, x, y));
-            }
-        }
-//
-//        for (int i = 0; i < alt; i++) {
-//            for (int j = 0; j < larg; j++) {
-//
-//            }
-//        }
-//        for (int i = 0; i < alt; i++) {
-//            for (int j = 0; j < larg; j++) {
-//                indice = i * larg + j;
-//                if (!par && indice >= botoes.length / 2) {
-//                    if (indice == botoes.length / 2) {
-//                        continue;
-//                    }
-//                    indice--;
-//                }
-//                botoes[indice] = new javax.swing.JButton();
-//                botoes[indice].setBackground(new java.awt.Color(255, 255, 255));
-//                botoes[indice].setFocusable(false);
-//                botoes[indice].setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-//                botoes[indice].addActionListener(new java.awt.event.ActionListener() {
-//                    public void actionPerformed(java.awt.event.ActionEvent evt) {
-//                        cliqueBotao(evt);
-//                    }
-//                });
-//                p_jogo.add(botoes[indice], new org.netbeans.lib.awtextra.AbsoluteConstraints(ESP * (j + 1) + x * j, ESP * (i + 1) + y * i, x, y));
-//            }
-//        }
-
-        mostrarCartas = new Timer(btns.length * 150, new ActionListener() {
-            public void actionPerformed(ActionEvent evt) {
-                for (Botao btn : btns) {
-                    btn.esconderImagem();
-                }
-                mostrarCartas.stop();
-            }
-        });
-
-        for (int i = 0; i < relacao.length; i++) {
-            ImageIcon imagem = new ImageIcon(getClass().getResource("/lista/imagens/" + imagens[relacao[i]] + ".png"));
-            imagem.setImage(imagem.getImage().getScaledInstance(((x < y || x == y) ? x - 10 : -1), ((x > y || x == y) ? y - 10 : -1), 1));
-            btns[i].setImagem(imagem);
-            btns[i].mostrarImagem();
-        }
-//        
-//        for (int i = 0; i < botoes.length / 2; i++) {
-//            ImageIcon imgCarta = new ImageIcon(getClass().getResource("/lista/imagens/" + imagens[i] + ".png"));
-//            imgCarta.setImage(imgCarta.getImage().getScaledInstance(((x < y || x == y) ? x - 10 : -1), ((x > y || x == y) ? y - 10 : -1), 1));
-//            botoes[relacao[i * 2]].setIcon(imgCarta);
-//            botoes[relacao[i * 2 + 1]].setIcon(imgCarta);
-//        }
-
-        mostrarCartas.start();
-
-        requestFocus();
+        jogar();
     }//GEN-LAST:event_b_jogarActionPerformed
 
     private void t_alturaKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_t_alturaKeyTyped
@@ -323,8 +221,82 @@ public class ListaJogoPOO extends javax.swing.JFrame {
             evt.consume();
     }//GEN-LAST:event_t_larguraKeyTyped
 
+    private void iniciar() {
+        l_mensagem.setFont(new Font(l_mensagem.getFont().getFontName(), Font.PLAIN, 18));
+        l_mensagem.setForeground(Color.black);
+        l_mensagem.setText("O tamanho mínimo (altura x largura) é 2 e o máximo " + IMG * 2);
+        tela("menu");
+        for (Component c : p_jogo.getComponents()) {
+            if (c instanceof JButton) {
+                p_jogo.remove(c);
+            }
+        }
+        l_erros.setText("Quantidade de erros: ");
+    }
+
+    private void jogar() {
+        alt = Integer.parseInt(t_altura.getText());
+        larg = Integer.parseInt(t_largura.getText());
+
+        if ((alt * larg > IMG * 2) || (alt * larg < 2)) {
+            l_mensagem.setForeground(Color.red);
+            l_mensagem.setFont(new Font(l_mensagem.getFont().getFontName(), Font.BOLD, l_mensagem.getFont().getSize() + (l_mensagem.getFont().getSize() < 24 ? 1 : 0)));
+            final Runnable runnable = (Runnable) Toolkit.getDefaultToolkit().getDesktopProperty("win.sound.default");
+            if (runnable != null) {
+                runnable.run();
+            }
+            return;
+        }
+
+        y = (600 - ESP * (alt + 1)) / alt;
+        x = (600 - ESP * (larg + 1)) / larg;
+        boolean par = (alt * larg) % 2 == 0;
+        btns = new Botao[alt * larg - (par ? 0 : 1)];
+        relacao = new int[btns.length];
+        vitoria = btns.length / 2;
+        for (int i = 0; i < imagens.length; i++) {
+            imagens[i] = i;
+        }
+        imagens = embaralhar(imagens);
+
+        for (int i = 0; i < relacao.length / 2; i++) {
+            for (int j = 0; j < 2; j++) {
+                relacao[i * 2 + j] = imagens[i];
+            }
+        }
+        relacao = embaralhar(relacao);
+
+        tela("jogo");
+
+        for (int i = 0; i < alt; i++) {
+            for (int j = 0; j < larg; j++) {
+                index = i * larg + j;
+                if (!par && index >= btns.length / 2) {
+                    if (index == btns.length / 2) {
+                        continue;
+                    }
+                    index--;
+                }
+                btns[index] = new Botao(new ImageIcon(getClass().getResource("/lista/imagens/" + imagens[relacao[index]] + ".png")), x, y);
+                btns[index].mostrarImagem();
+                btns[index].addActionListener(this::cliqueBotao);
+                p_jogo.add(btns[index], new org.netbeans.lib.awtextra.AbsoluteConstraints(ESP * (j + 1) + x * j, ESP * (i + 1) + y * i, x, y));
+            }
+        }
+
+        mostrarCartas = new Timer(btns.length * 150, (ActionEvent evt1) -> {
+            for (Botao btn : btns) {
+                btn.esconderImagem();
+            }
+            mostrarCartas.stop();
+        });
+        mostrarCartas.start();
+
+        requestFocus();
+    }
+
     private void cliqueBotao(java.awt.event.ActionEvent evt) {
-        Botao botao = encontrar((JButton) evt.getSource());
+        Botao botao = (Botao) evt.getSource();
 
         if (tempoEmMili == 0) {
             tempoEmMili = System.currentTimeMillis();
@@ -332,100 +304,77 @@ public class ListaJogoPOO extends javax.swing.JFrame {
 
         if (!botao.taMostrando() && (virarCartas == null ? true : !virarCartas.isRunning()) && !mostrarCartas.isRunning()) {
             tocarSom("carta");
-            
-            botao.mostrarImagem();
-//            int numBotao = (int) (encontrarBotao(botao) * 2);
-//            if (botao.getIcon() == null) {
-//                ImageIcon imgCarta = new ImageIcon(getClass().getResource("/lista/imagens/" + imagens[numBotao / 2] + ".png"));
-//                imgCarta.setImage(imgCarta.getImage().getScaledInstance(((x < y || x == y) ? x - 10 : -1), ((x > y || x == y) ? y - 10 : -1), 1));
-//                botao.setIcon(imgCarta);
-//            } else {
-//                botao.setIcon(null);
-//            }
 
-            if (check == null) { 
+            botao.mostrarImagem();
+
+            if (check == null) {
                 check = botao;
             } else {
-                System.out.println(check.getImagem());
-                System.out.println(botao.getImagem());
                 if (check.getImagem().toString().equals(botao.getImagem().toString())) {
                     tocarSom("sucesso", 0.5f);
                     vitoria--;
+                    if (vitoria == 0) {
+                        tocarSom("vitoria", 0.1f);
+                        l_tempo.setText(String.format("%.3f", (double) (System.currentTimeMillis() - tempoEmMili) / 1000));
+                        tempoEmMili = 0;
+                        if (erros == 0) {
+                            l_erros.setForeground(Color.green);
+                        } else {
+                            l_erros.setForeground(Color.red);
+                        }
+                        l_erros.setText(l_erros.getText() + erros);
+                        erros = 0;
+                        terminar.start();
+                    }
                     check = null;
                 } else {
                     tocarSom("erro", 0.5f);
                     erros++;
-                    virarCartas = new Timer(500, new ActionListener() {
-                        public void actionPerformed(ActionEvent evt) {
-                            check.esconderImagem();
-                            botao.esconderImagem();
-                            check = null;
-                            virarCartas.stop();
-                        }
+                    virarCartas = new Timer(500, (ActionEvent evt1) -> {
+                        check.esconderImagem();
+                        botao.esconderImagem();
+                        check = null;
+                        virarCartas.stop();
                     });
                     virarCartas.start();
                 }
             }
-//            if (check < 0) {
-//                check = numBotao;
-//                System.out.println(numBotao + " " + check);
-//            } else {
-//                System.out.println(numBotao + " " + check);
-//                if (check / 2 == numBotao / 2) {
-//                    tocarSom("sucesso", 0.5f);
-//                    check = -1;
-//                } else {
-//                    tocarSom("erro", 0.5f);
-//                    erros++;
-//                    virarCartas = new Timer(500, new ActionListener() {
-//                        public void actionPerformed(ActionEvent evt) {
-//                            botao.setIcon(null);
-//                            botoes[relacao[check]].setIcon(null);
-//                            check = -1;
-//                            System.out.println("Check = -1");
-//                            virarCartas.stop();
-//                        }
-//                    });
-//                    virarCartas.start();
-//                }
-//            }
-
-            if (vitoria == 0) {
-                tocarSom("vitoria", 0.1f);
-                l_tempo.setText(String.format("%.3f", (double) (System.currentTimeMillis() - tempoEmMili) / 1000));
-                tempoEmMili = 0;
-                l_erros.setText(l_erros.getText() + erros);
-                erros = 0;
-                terminar.start();
-            }
         }
     }
 
-    // criar um método que retorne a posição do botao passado por parâmetro, dentro do vetor botoes
-//    private double encontrarBotao(javax.swing.JButton b) {
-//        for (int i = 0; i < botoes.length; i++) {
-//            if (botoes[i].equals(b)) {
-//                for (int j = 0; j < relacao.length; j++) {
-//                    if (relacao[j] == i) {
-//                        return (double) j / 2;
-//                    }
-//                }
-//            }
-//        }
-//        return -1;
-//    }
-    
-    private Botao encontrar(JButton b) {
-        for (Botao btn : btns)
-            if (b.equals(btn.getBotao()))
-                return btn;
-        
-        return null;
+    private void tela(String nome) {
+        CardLayout cl = (CardLayout) p_principal.getLayout();
+        cl.show(p_principal, nome);
     }
 
-    private void tela(String nome) {
-        java.awt.CardLayout cl = (java.awt.CardLayout) p_principal.getLayout();
-        cl.show(p_principal, nome);
+    private void tocarSom(String nome, boolean loop, float volume) {
+
+        try {
+            AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(new BufferedInputStream(getClass().getResourceAsStream("/lista/audio/" + nome + ".wav")));
+            Clip clip = AudioSystem.getClip();
+            clip.open(audioInputStream);
+            clip.start();
+            FloatControl gainControl = (FloatControl) clip.getControl(FloatControl.Type.MASTER_GAIN);
+            gainControl.setValue(20f * (float) Math.log10(volume));
+            if (loop) {
+                clip.loop(Clip.LOOP_CONTINUOUSLY);
+            }
+        } catch (Exception ex) {
+            System.out.println("Erro");
+            ex.printStackTrace();
+        }
+    }
+
+    private void tocarSom(String nome) {
+        tocarSom(nome, false, 0.05f);
+    }
+
+    private void tocarSom(String nome, float volume) {
+        tocarSom(nome, false, volume);
+    }
+
+    private void tocarSom(String nome, boolean loop) {
+        tocarSom(nome, loop, 0.05f);
     }
 
     private static int[] embaralhar(int[] vet) {
@@ -465,36 +414,6 @@ public class ListaJogoPOO extends javax.swing.JFrame {
             return false;
         }
         return true;
-    }
-
-    private void tocarSom(String nome, boolean loop, float volume) {
-
-        try {
-            AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(new BufferedInputStream(getClass().getResourceAsStream("/lista/audio/" + nome + ".wav")));
-            Clip clip = AudioSystem.getClip();
-            clip.open(audioInputStream);
-            clip.start();
-            FloatControl gainControl = (FloatControl) clip.getControl(FloatControl.Type.MASTER_GAIN);
-            gainControl.setValue(20f * (float) Math.log10(volume));
-            if (loop) {
-                clip.loop(Clip.LOOP_CONTINUOUSLY);
-            }
-        } catch (Exception ex) {
-            System.out.println("Erro");
-            ex.printStackTrace();
-        }
-    }
-
-    private void tocarSom(String nome) {
-        tocarSom(nome, false, 0.05f);
-    }
-
-    private void tocarSom(String nome, float volume) {
-        tocarSom(nome, false, volume);
-    }
-
-    private void tocarSom(String nome, boolean loop) {
-        tocarSom(nome, loop, 0.05f);
     }
 
     public static void main(String args[]) {

@@ -1,51 +1,36 @@
 package lista;
 
-import javax.swing.*;
+import java.awt.Color;
+import java.awt.Cursor;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
 
-public class Botao {
-    
-    private JButton botao = new JButton();
+public class Botao extends JButton {
+
     private ImageIcon imagem = new ImageIcon();
-    private int pos;
 
-    public Botao() {
-        
-    }
-
-    public JButton getBotao() {
-        return botao;
-    }
-
-    public void setBotao(JButton botao) {
-        this.botao = botao;
+    public Botao(ImageIcon imagem, int x, int y) {
+        imagem.setImage(imagem.getImage().getScaledInstance(((x < y || x == y) ? x - 10 : -1), ((x > y || x == y) ? y - 10 : -1), 1));
+        this.imagem = imagem;
+        setBackground(Color.white);
+        setFocusable(false);
+        setCursor(new Cursor(Cursor.HAND_CURSOR));
     }
 
     public ImageIcon getImagem() {
         return imagem;
     }
-
-    public void setImagem(ImageIcon imagem) {
-        this.imagem = imagem;
-    }
-
-    public int getPos() {
-        return pos;
-    }
-
-    public void setPos(int pos) {
-        this.pos = pos;
-    }
-
+    
     public void mostrarImagem() {
-        botao.setIcon(imagem);
+        setIcon(imagem);
     }
 
     public void esconderImagem() {
-        botao.setIcon(null);
+        setIcon(null);
     }
 
     public boolean taMostrando() {
-        return (botao.getIcon() != null);
+        return (getIcon() != null);
     }
-
+    
 }
