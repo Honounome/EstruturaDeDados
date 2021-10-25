@@ -1,8 +1,12 @@
 package matriz;
 /**
- * Para retirar o bot e transfomar em multiplayer deve-se:
- * - descomentar as linhas: 16, 369 a 372, 391
- * - comentar as linhas: 363, 374
+ * Para desativar o bot e transfomar em multiplayer deve-se:
+ * - descomentar as linhas: 18, 379 a 382, 394
+ * - comentar as linhas: 371, 384
+ * 
+ * Autores:
+ * - Wesley Sousa   20192264158
+ * - Gabriel Souza  20192263939
  */
 
 
@@ -389,7 +393,7 @@ public class MatrizJogo extends javax.swing.JFrame {
         
         //turno = !turno;
         
-        // procura por 3 valores iguais nas linhas de "pos" e finliza o jogo
+        // procura por 3 valores iguais nas linhas de "pos" e finaliza o jogo
         // colocando uma borda preta no trio vencedor e desativando todos botões
         for(int i = 0; i < pos.length; i++) {
             if(pos[i][0].equals(pos[i][1]) && pos[i][1].equals(pos[i][2]) && !"".equals(pos[i][0])) {
