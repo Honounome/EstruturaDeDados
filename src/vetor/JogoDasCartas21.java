@@ -274,9 +274,9 @@ public class JogoDasCartas21 extends javax.swing.JFrame {
     }
     
     private String setSortCarta(javax.swing.JLabel label) {
-        //Criando o vetor de String que contem os Nipes do Baralho
+        // Criando o vetor de String que contem os Nipes do Baralho
         String[] nps = {"Ouro", "Copas", "Espadas", "Paus"};
-        //Criando o vetor de String que contem os Valores das Cartas
+        // Criando o vetor de String que contem os Valores das Cartas
         String[] fcs = {"1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13"};
         String nape = nps[(int)(Math.random()*4)];
         String face = fcs[(int)(Math.random()*13)];
@@ -285,6 +285,7 @@ public class JogoDasCartas21 extends javax.swing.JFrame {
     }
     
     private void sacar(javax.swing.JLabel label, javax.swing.JLabel text, int adversario) {
+         
         int face = Integer.parseInt(setSortCarta(label));
         int mao;
         if(face > 10)

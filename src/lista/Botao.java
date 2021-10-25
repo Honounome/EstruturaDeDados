@@ -20,7 +20,7 @@ public class Botao extends JButton {
     public ImageIcon getImagem() {
         return imagem;
     }
-    
+
     public void mostrarImagem() {
         setIcon(imagem);
     }
@@ -32,5 +32,5 @@ public class Botao extends JButton {
     public boolean taMostrando() {
         return (getIcon() != null);
     }
-    
+
 }

@@ -1,39 +1,42 @@
 package matriz;
+/**
+ * Para retirar o bot e transfomar em multiplayer deve-se:
+ * - descomentar as linhas: 16, 369 a 372, 391
+ * - comentar as linhas: 363, 374
+ */
+
 
 import java.awt.Color;
 import javax.swing.BorderFactory;
-//import javax.swing.ImageIcon;
 
 public class MatrizJogo extends javax.swing.JFrame {
 
     //boolean turno;
-    //Criando uma matriz de JButtons
+    // Cria uma matriz de JButtons
     javax.swing.JButton[][] botoes;
-    //Criando uma matriz de Strings
-    String[][] pos = new String[8][3];
-    //Criando uma matriz de Inteiros
-    int[][][] posLnCol = {{{0,0}, {0,1}, {0,2}},
-                          {{1,0}, {1,1}, {1,2}},
-                          {{2,0}, {2,1}, {2,2}},
-                          {{0,0}, {1,0}, {2,0}}, 
-                          {{0,1}, {1,1}, {2,1}},
-                          {{0,2}, {1,2}, {2,2}},
-                          {{0,0}, {1,1}, {2,2}},
-                          {{0,2}, {1,1}, {2,0}}};
     
+    // Cria uma matriz que vai servir para que o programa analise
+    // todas as linhas, colunas e diagonais do jogo da velha
+    String[][] pos = new String[8][3];
+    
+    // Cria uma matriz que relaciona as posiçoes da variável "pos" com as da variável "botoes"
+    final int[][][] POS_LN_COL = {{{0,0}, {0,1}, {0,2}},
+                                  {{1,0}, {1,1}, {1,2}},
+                                  {{2,0}, {2,1}, {2,2}},
+                                  {{0,0}, {1,0}, {2,0}},
+                                  {{0,1}, {1,1}, {2,1}},
+                                  {{0,2}, {1,2}, {2,2}},
+                                  {{0,0}, {1,1}, {2,2}},
+                                  {{0,2}, {1,1}, {2,0}}};
+
     public MatrizJogo() {
         initComponents();
-        //Preenchendo a matriz de JButton com 9 botões para compor o Jogo da Velha
+        // Preenche a matriz de JButton com 9 botões para mapear o Jogo da Velha
+        // agora cada posição da matriz aponta para o jButton que ela representa
         botoes = new javax.swing.JButton[][]{{botao00, botao01, botao02},
                                              {botao10, botao11, botao12},
                                              {botao20, botao21, botao22}};
         iniciar();
-        
-        /*
-        ImageIcon imgCarta = new ImageIcon(getClass().getResource("/matriz/velha/confia.jpg"));
-        imgCarta.setImage(imgCarta.getImage().getScaledInstance(background.getWidth(), background.getHeight(), 1));
-        background.setIcon(imgCarta);
-        */
     }
 
     @SuppressWarnings("unchecked")
@@ -300,63 +303,55 @@ public class MatrizJogo extends javax.swing.JFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
-
+    // Série de métodos para os eventos dos botões
     private void botao00ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botao00ActionPerformed
-        marcar(0, 0);
-        cpu();
+        jogar(0, 0);
     }//GEN-LAST:event_botao00ActionPerformed
 
     private void botao01ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botao01ActionPerformed
-        marcar(0, 1);
-        cpu();
+        jogar(0, 1);
     }//GEN-LAST:event_botao01ActionPerformed
 
     private void botao10ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botao10ActionPerformed
-        marcar(1, 0);
-        cpu();
+        jogar(1, 0);
     }//GEN-LAST:event_botao10ActionPerformed
 
     private void botao11ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botao11ActionPerformed
-        marcar(1, 1);
-        cpu();
+        jogar(1, 1);
     }//GEN-LAST:event_botao11ActionPerformed
 
     private void botao12ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botao12ActionPerformed
-        marcar(1, 2);
-        cpu();
+        jogar(1, 2);
     }//GEN-LAST:event_botao12ActionPerformed
 
     private void botao20ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botao20ActionPerformed
-        marcar(2, 0);
-        cpu();
+        jogar(2, 0);
     }//GEN-LAST:event_botao20ActionPerformed
 
     private void botao21ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botao21ActionPerformed
-        marcar(2, 1);
-        cpu();
+        jogar(2, 1);
     }//GEN-LAST:event_botao21ActionPerformed
 
     private void botao22ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botao22ActionPerformed
-        marcar(2, 2);
-        cpu();
+        jogar(2, 2);
     }//GEN-LAST:event_botao22ActionPerformed
 
     private void botao02ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botao02ActionPerformed
-        marcar(0, 2);
-        cpu();
+        jogar(0, 2);
     }//GEN-LAST:event_botao02ActionPerformed
 
     private void reiniciarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_reiniciarActionPerformed
         iniciar();
     }//GEN-LAST:event_reiniciarActionPerformed
 
+    // configura as variáveis para seus respectivos valores padrão
     private void iniciar() {
-        //Passando por todos os elementos da matriz pos e preenchendo com vazio cada elemento
+        //Passando por todos os elementos da matriz "pos" e preenchendo com vazio cada elemento
         for(int i = 0; i < pos.length; i++) {
             for(int j = 0; j < pos[i].length; j++)
                 pos[i][j] = "";
         }
-        //Passando por todos os elementos da matriz de botoes, configurando e preenchendo com vazio cada elemento
+        //Passando por todos os elementos da matriz "botoes", configurando e preenchendo com vazio cada elemento
         for(int i = 0; i < botoes.length; i++) {
             for(int j = 0; j < botoes[i].length; j++) {
                 botoes[i][j].setEnabled(true);
@@ -366,16 +361,25 @@ public class MatrizJogo extends javax.swing.JFrame {
         }
     }
     
+    // método utilizado nos botões
+    private void jogar(int x, int y) {
+        marcar(x, y);
+        cpu();
+    }
+    
+    // método que coloca o parâmetro "xo" como o texto do botão presente 
+    // na linha "ln" e coluna "col" da matriz "botoes"
     private void marcar(int ln, int col, String xo) {
         botoes[ln][col].setEnabled(false);
-        /*
-        if(turno)
-            marcar.setText("X");
-        else
-            marcar.setText("O");
-        */
+        
+//        if(turno)
+//            botoes[ln][col].setText("X");
+//        else
+//            botoes[ln][col].setText("O");
+        
         botoes[ln][col].setText(xo);
         
+        // insere dentro da matriz "pos"
         pos[ln][col] = botoes[ln][col].getText();
         pos[col+3][ln] = botoes[ln][col].getText();
         if(ln == col)
@@ -383,34 +387,31 @@ public class MatrizJogo extends javax.swing.JFrame {
         if(ln + col == 2)
             pos[7][ln] = botoes[ln][col].getText();
         
-        System.out.println();
-        for(String[] i : pos) {
-            for(String j : i) {
-                System.out.printf("%1s ", j);
-            }
-            System.out.println();
-        }
-        
         //turno = !turno;
+        
+        // procura por 3 valores iguais nas linhas de "pos" e finliza o jogo
+        // colocando uma borda preta no trio vencedor e desativando todos botões
         for(int i = 0; i < pos.length; i++) {
             if(pos[i][0].equals(pos[i][1]) && pos[i][1].equals(pos[i][2]) && !"".equals(pos[i][0])) {
                 for(int j = 0; j < botoes.length; j++)
                     for(int k = 0; k < botoes[j].length; k++)
                         botoes[k][j].setEnabled(false);
-                botoes[posLnCol[i][0][0]][posLnCol[i][0][1]].setBorder(BorderFactory.createLineBorder(Color.black, 3));
-                botoes[posLnCol[i][1][0]][posLnCol[i][1][1]].setBorder(BorderFactory.createLineBorder(Color.black, 3));
-                botoes[posLnCol[i][2][0]][posLnCol[i][2][1]].setBorder(BorderFactory.createLineBorder(Color.black, 3));
+                botoes[POS_LN_COL[i][0][0]][POS_LN_COL[i][0][1]].setBorder(BorderFactory.createLineBorder(Color.black, 3));
+                botoes[POS_LN_COL[i][1][0]][POS_LN_COL[i][1][1]].setBorder(BorderFactory.createLineBorder(Color.black, 3));
+                botoes[POS_LN_COL[i][2][0]][POS_LN_COL[i][2][1]].setBorder(BorderFactory.createLineBorder(Color.black, 3));
                 break;
             }
         }
     }
     
+    // polimorfismo
     private void marcar(int ln, int col) {
         marcar(ln, col, "X");
     }
     
     private void cpu() {
         if(disp()) {
+            // matriz que guarda as posicoes vazias do tabuleiro
             int[][] posVaz = new int[8][2];
             int qntVaz = 0;
             int rdm;
@@ -419,12 +420,14 @@ public class MatrizJogo extends javax.swing.JFrame {
                     for(int i = 0; i < 3; i++) {
                         for(int j = 0; j < 3; j++) {
                             if("".equals(pos[i][j])) {
+                                // guarda as posições de linha e coluna disponíveis
                                 posVaz[qntVaz][0] = i;
                                 posVaz[qntVaz][1] = j;
                                 qntVaz++;
                             }
                         }
                     }
+                    // pega aleatoriamente uma das posições disponíveis
                     rdm = (int)(Math.random()*qntVaz);
                     marcar(posVaz[rdm][0], posVaz[rdm][1], "O");
                 }
@@ -432,22 +435,26 @@ public class MatrizJogo extends javax.swing.JFrame {
         }
     }
     
+    // analisa se uma das linhas da matriz "pos" tem dois elementos 
+    // iguais à variável "xo", que pode ser "O" ou "X"
+    // se ele encontrar, marca "O" na posição restante
     private boolean analise(String xo) {
         for(int i = 0; i < pos.length; i++) {
             if(xo.equals(pos[i][0]) && xo.equals(pos[i][1]) && "".equals(pos[i][2])) {
-                marcar(posLnCol[i][2][0],posLnCol[i][2][1], "O");
+                marcar(POS_LN_COL[i][2][0],POS_LN_COL[i][2][1], "O");
                 return false;
             } else if(xo.equals(pos[i][0]) && "".equals(pos[i][1]) && xo.equals(pos[i][2])) {
-                marcar(posLnCol[i][1][0],posLnCol[i][1][1], "O");
+                marcar(POS_LN_COL[i][1][0],POS_LN_COL[i][1][1], "O");
                 return false;
             } else if("".equals(pos[i][0]) && xo.equals(pos[i][1]) && xo.equals(pos[i][2])) {
-                marcar(posLnCol[i][0][0],posLnCol[i][0][1], "O");
+                marcar(POS_LN_COL[i][0][0],POS_LN_COL[i][0][1], "O");
                 return false;
             }
         }
         return true;
     }
     
+    // verifica se todas as posições estão disponíveis
     private boolean disp() {
         for(int i = 0; i < 3; i++)
             for(int j = 0; j < 3; j++)
