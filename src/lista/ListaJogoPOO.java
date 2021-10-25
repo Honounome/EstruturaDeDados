@@ -222,6 +222,7 @@ public class ListaJogoPOO extends JFrame {
     }//GEN-LAST:event_t_larguraKeyTyped
 
     private void iniciar() {
+        check = null;
         l_mensagem.setFont(new Font(l_mensagem.getFont().getFontName(), Font.PLAIN, 18));
         l_mensagem.setForeground(Color.black);
         l_mensagem.setText("O tamanho mínimo (altura x largura) é 2 e o máximo " + IMG * 2);
@@ -232,67 +233,72 @@ public class ListaJogoPOO extends JFrame {
             }
         }
         l_erros.setText("Quantidade de erros: ");
+        t_altura.requestFocus();
     }
 
     private void jogar() {
-        alt = Integer.parseInt(t_altura.getText());
-        larg = Integer.parseInt(t_largura.getText());
+        if (mostrarCartas == null ? true : !mostrarCartas.isRunning()) {
+            alt = Integer.parseInt(t_altura.getText());
+            larg = Integer.parseInt(t_largura.getText());
 
-        if ((alt * larg > IMG * 2) || (alt * larg < 2)) {
-            l_mensagem.setForeground(Color.red);
-            l_mensagem.setFont(new Font(l_mensagem.getFont().getFontName(), Font.BOLD, l_mensagem.getFont().getSize() + (l_mensagem.getFont().getSize() < 24 ? 1 : 0)));
-            final Runnable runnable = (Runnable) Toolkit.getDefaultToolkit().getDesktopProperty("win.sound.default");
-            if (runnable != null) {
-                runnable.run();
-            }
-            return;
-        }
-
-        y = (600 - ESP * (alt + 1)) / alt;
-        x = (600 - ESP * (larg + 1)) / larg;
-        boolean par = (alt * larg) % 2 == 0;
-        btns = new Botao[alt * larg - (par ? 0 : 1)];
-        relacao = new int[btns.length];
-        vitoria = btns.length / 2;
-        for (int i = 0; i < imagens.length; i++) {
-            imagens[i] = i;
-        }
-        imagens = embaralhar(imagens);
-
-        for (int i = 0; i < relacao.length / 2; i++) {
-            for (int j = 0; j < 2; j++) {
-                relacao[i * 2 + j] = imagens[i];
-            }
-        }
-        relacao = embaralhar(relacao);
-
-        tela("jogo");
-
-        for (int i = 0; i < alt; i++) {
-            for (int j = 0; j < larg; j++) {
-                index = i * larg + j;
-                if (!par && index >= btns.length / 2) {
-                    if (index == btns.length / 2) {
-                        continue;
-                    }
-                    index--;
+            if ((alt * larg > IMG * 2) || (alt * larg < 2)) {
+                l_mensagem.setForeground(Color.red);
+                l_mensagem.setFont(new Font(l_mensagem.getFont().getFontName(), Font.BOLD, l_mensagem.getFont().getSize() + (l_mensagem.getFont().getSize() < 24 ? 1 : 0)));
+                final Runnable runnable = (Runnable) Toolkit.getDefaultToolkit().getDesktopProperty("win.sound.default");
+                if (runnable != null) {
+                    runnable.run();
                 }
-                btns[index] = new Botao(new ImageIcon(getClass().getResource("/lista/imagens/" + imagens[relacao[index]] + ".png")), x, y);
-                btns[index].mostrarImagem();
-                btns[index].addActionListener(this::cliqueBotao);
-                p_jogo.add(btns[index], new org.netbeans.lib.awtextra.AbsoluteConstraints(ESP * (j + 1) + x * j, ESP * (i + 1) + y * i, x, y));
+                return;
             }
+
+            y = (600 - ESP * (alt + 1)) / alt;
+            x = (600 - ESP * (larg + 1)) / larg;
+            boolean par = (alt * larg) % 2 == 0;
+            btns = new Botao[alt * larg - (par ? 0 : 1)];
+            relacao = new int[btns.length];
+            vitoria = btns.length / 2;
+            for (int i = 0; i < imagens.length; i++) {
+                imagens[i] = i;
+            }
+            imagens = embaralhar(imagens);
+
+            for (int i = 0; i < relacao.length / 2; i++) {
+                for (int j = 0; j < 2; j++) {
+                    relacao[i * 2 + j] = imagens[i];
+                }
+            }
+            relacao = embaralhar(relacao);
+
+            tela("jogo");
+
+            for (int i = 0; i < alt; i++) {
+                for (int j = 0; j < larg; j++) {
+                    index = i * larg + j;
+                    if (!par && index >= btns.length / 2) {
+                        if (index == btns.length / 2) {
+                            continue;
+                        }
+                        index--;
+                    }
+                    btns[index] = new Botao(new ImageIcon(getClass().getResource("/lista/imagens/" + imagens[relacao[index]] + ".png")), x, y);
+                    btns[index].mostrarImagem();
+                    btns[index].addActionListener(this::cliqueBotao);
+                    p_jogo.add(btns[index], new org.netbeans.lib.awtextra.AbsoluteConstraints(ESP * (j + 1) + x * j, ESP * (i + 1) + y * i, x, y));
+                }
+            }
+
+            mostrarCartas = new Timer(btns.length * 150, (ActionEvent evt1) -> {
+                for (Botao btn : btns) {
+                    System.out.println("Esconder");
+                    btn.esconderImagem();
+                }
+                System.out.println("Cheguei");
+                mostrarCartas.stop();
+            });
+            mostrarCartas.start();
+
+            requestFocus();
         }
-
-        mostrarCartas = new Timer(btns.length * 150, (ActionEvent evt1) -> {
-            for (Botao btn : btns) {
-                btn.esconderImagem();
-            }
-            mostrarCartas.stop();
-        });
-        mostrarCartas.start();
-
-        requestFocus();
     }
 
     private void cliqueBotao(java.awt.event.ActionEvent evt) {
@@ -317,11 +323,7 @@ public class ListaJogoPOO extends JFrame {
                         tocarSom("vitoria", 0.1f);
                         l_tempo.setText(String.format("%.3f", (double) (System.currentTimeMillis() - tempoEmMili) / 1000));
                         tempoEmMili = 0;
-                        if (erros == 0) {
-                            l_erros.setForeground(Color.green);
-                        } else {
-                            l_erros.setForeground(Color.red);
-                        }
+                        l_erros.setForeground(erros == 0 ? Color.green : Color.red);
                         l_erros.setText(l_erros.getText() + erros);
                         erros = 0;
                         terminar.start();

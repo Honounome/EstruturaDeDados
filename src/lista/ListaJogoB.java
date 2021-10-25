@@ -1,53 +1,66 @@
 package lista;
 
-import java.awt.*;
+import java.awt.CardLayout;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Font;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.io.BufferedInputStream;
-import javax.swing.*;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
 import javax.sound.sampled.FloatControl;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.Timer;
 
-public class ListaJogoB extends javax.swing.JFrame {
+public class ListaJogoB extends JFrame {
 
     private final int ESP = 10;
-    private final int IMG = 18;
+    private final int IMG = new java.io.File("src/lista/imagens/").listFiles().length;
+    long tempoEmMili;
     int[] imagens = new int[IMG];
     int[] relacao;
     int x, y, larg, alt, vitoria, erros = 0, check = -1;
-    long tempoEmMili;
     Timer virarCartas, mostrarCartas, terminar;
-    javax.swing.JButton[] botoes;
+    JButton[] botoes;
 
     public ListaJogoB() {
         initComponents();
         l_mensagem.setText(l_mensagem.getText() + IMG * 2);
-        tocarSom("bgm", true);
+        tocarSom("bgm", true, 0.075f);
 
-        addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyPressed(java.awt.event.KeyEvent evt) {
+        addKeyListener(new KeyAdapter() {
+            public void keyPressed(KeyEvent evt) {
                 if ((evt.getKeyCode() == KeyEvent.VK_R) && !terminar.isRunning()) {
-                    l_mensagem.setFont(new Font(l_mensagem.getFont().getFontName(), Font.PLAIN, 18));
-                    l_mensagem.setForeground(Color.black);
-                    tela("menu");
-                    for (Component c : p_jogo.getComponents()) {
-                        if (c instanceof javax.swing.JButton) {
-                            p_jogo.remove(c);
-                        }
-                    }
-                    l_erros.setText("Quantidade de erros: ");
+                    iniciar();
                 }
             }
         });
-        
-        terminar = new Timer(3000, new ActionListener() {
-            public void actionPerformed(ActionEvent evt) {
-                tela("final");
-                terminar.stop();
+
+        t_altura.addKeyListener(new KeyAdapter() {
+            public void keyPressed(KeyEvent evt) {
+                if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
+                    jogar();
+                }
             }
+        });
+
+        t_largura.addKeyListener(new KeyAdapter() {
+            public void keyPressed(KeyEvent evt) {
+                if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
+                    jogar();
+                }
+            }
+        });
+
+        terminar = new Timer(3000, (ActionEvent evt) -> {
+            tela("final");
+            terminar.stop();
         });
 
     }
@@ -125,6 +138,7 @@ public class ListaJogoB extends javax.swing.JFrame {
         b_jogar.setFont(new java.awt.Font("Arial Rounded MT Bold", 0, 36)); // NOI18N
         b_jogar.setText("JOGAR");
         b_jogar.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        b_jogar.setFocusable(false);
         b_jogar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 b_jogarActionPerformed(evt);
@@ -195,6 +209,33 @@ public class ListaJogoB extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void b_jogarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_b_jogarActionPerformed
+        jogar();
+    }//GEN-LAST:event_b_jogarActionPerformed
+
+    private void t_alturaKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_t_alturaKeyTyped
+        if (!numerico("" + evt.getKeyChar()))
+            evt.consume();
+    }//GEN-LAST:event_t_alturaKeyTyped
+
+    private void t_larguraKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_t_larguraKeyTyped
+        if (!numerico("" + evt.getKeyChar()))
+            evt.consume();
+    }//GEN-LAST:event_t_larguraKeyTyped
+
+    private void iniciar() {
+        l_mensagem.setFont(new Font(l_mensagem.getFont().getFontName(), Font.PLAIN, 18));
+        l_mensagem.setForeground(Color.black);
+        l_mensagem.setText("O tamanho mínimo (altura x largura) é 2 e o máximo " + IMG * 2);
+        tela("menu");
+        for (Component c : p_jogo.getComponents()) {
+            if (c instanceof JButton) {
+                p_jogo.remove(c);
+            }
+        }
+        l_erros.setText("Quantidade de erros: ");
+    }
+
+    private void jogar() {
         alt = Integer.parseInt(t_altura.getText());
         larg = Integer.parseInt(t_largura.getText());
 
@@ -226,8 +267,8 @@ public class ListaJogoB extends javax.swing.JFrame {
             imagens[i] = i;
         }
         imagens = embaralhar(imagens);
-        
-        vitoria = botoes.length/2;
+
+        vitoria = botoes.length / 2;
 
         tela("jogo");
 
@@ -252,14 +293,12 @@ public class ListaJogoB extends javax.swing.JFrame {
                 p_jogo.add(botoes[indice], new org.netbeans.lib.awtextra.AbsoluteConstraints(ESP * (j + 1) + x * j, ESP * (i + 1) + y * i, x, y));
             }
         }
-        
-        mostrarCartas = new Timer(botoes.length * 150, new ActionListener() {
-            public void actionPerformed(ActionEvent evt) {
-                for(int i = 0; i < botoes.length; i++) {
-                    botoes[i].setIcon(null);
-                }
-                mostrarCartas.stop();
+
+        mostrarCartas = new Timer(botoes.length * 150, (ActionEvent evt1) -> {
+            for (int i = 0; i < botoes.length; i++) {
+                botoes[i].setIcon(null);
             }
+            mostrarCartas.stop();
         });
 
         for (int i = 0; i < botoes.length / 2; i++) {
@@ -268,29 +307,19 @@ public class ListaJogoB extends javax.swing.JFrame {
             botoes[relacao[i * 2]].setIcon(imgCarta);
             botoes[relacao[i * 2 + 1]].setIcon(imgCarta);
         }
-        
+
         mostrarCartas.start();
 
         requestFocus();
-    }//GEN-LAST:event_b_jogarActionPerformed
-
-    private void t_alturaKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_t_alturaKeyTyped
-        if (!numerico("" + evt.getKeyChar()))
-            evt.consume();
-    }//GEN-LAST:event_t_alturaKeyTyped
-
-    private void t_larguraKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_t_larguraKeyTyped
-        if (!numerico("" + evt.getKeyChar()))
-            evt.consume();
-    }//GEN-LAST:event_t_larguraKeyTyped
+    }
 
     private void cliqueBotao(java.awt.event.ActionEvent evt) {
-        javax.swing.JButton botao = (javax.swing.JButton) evt.getSource();
-        
+        JButton botao = (JButton) evt.getSource();
+
         if (tempoEmMili == 0) {
             tempoEmMili = System.currentTimeMillis();
         }
-        
+
         if (botao.getIcon() == null && (virarCartas == null ? true : !virarCartas.isRunning()) && !mostrarCartas.isRunning()) {
             tocarSom("carta");
             int numBotao = (int) (encontrarBotao(botao) * 2);
@@ -301,7 +330,7 @@ public class ListaJogoB extends javax.swing.JFrame {
             } else {
                 botao.setIcon(null);
             }
-            
+
             if (check < 0) {
                 check = numBotao;
                 System.out.println(numBotao + " " + check);
@@ -310,31 +339,30 @@ public class ListaJogoB extends javax.swing.JFrame {
                 if (check / 2 == numBotao / 2) {
                     tocarSom("sucesso", 0.5f);
                     vitoria--;
+                    if (vitoria == 0) {
+                        tocarSom("vitoria", 0.1f);
+                        l_tempo.setText(String.format("%.3f", (double) (System.currentTimeMillis() - tempoEmMili) / 1000));
+                        tempoEmMili = 0;
+                        l_erros.setForeground(erros == 0 ? Color.green : Color.red);
+                        l_erros.setText(l_erros.getText() + erros);
+                        erros = 0;
+                        terminar.start();
+                    }
                     check = -1;
                 } else {
                     tocarSom("erro", 0.5f);
                     erros++;
-                    virarCartas = new Timer(500, new ActionListener() {
-                        public void actionPerformed(ActionEvent evt) {
-                            botao.setIcon(null);
-                            botoes[relacao[check]].setIcon(null);
-                            check = -1;
-                            System.out.println("Check = -1");
-                            virarCartas.stop();
-                        }
+                    virarCartas = new Timer(500, (ActionEvent evt1) -> {
+                        botao.setIcon(null);
+                        botoes[relacao[check]].setIcon(null);
+                        check = -1;
+                        System.out.println("Check = -1");
+                        virarCartas.stop();
                     });
                     virarCartas.start();
                 }
             }
-            
-            if(vitoria == 0) {
-                tocarSom("vitoria", 0.1f);
-                l_tempo.setText(String.format("%.3f", (double) (System.currentTimeMillis() - tempoEmMili)/1000));
-                tempoEmMili = 0;
-                l_erros.setText(l_erros.getText() + erros);
-                erros = 0;
-                terminar.start();
-            }
+
         }
     }
 
