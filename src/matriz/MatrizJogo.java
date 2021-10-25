@@ -7,8 +7,11 @@ import javax.swing.BorderFactory;
 public class MatrizJogo extends javax.swing.JFrame {
 
     //boolean turno;
+    //Criando uma matriz de JButtons
     javax.swing.JButton[][] botoes;
+    //Criando uma matriz de Strings
     String[][] pos = new String[8][3];
+    //Criando uma matriz de Inteiros
     int[][][] posLnCol = {{{0,0}, {0,1}, {0,2}},
                           {{1,0}, {1,1}, {1,2}},
                           {{2,0}, {2,1}, {2,2}},
@@ -20,6 +23,7 @@ public class MatrizJogo extends javax.swing.JFrame {
     
     public MatrizJogo() {
         initComponents();
+        //Preenchendo a matriz de JButton com 9 botões para compor o Jogo da Velha
         botoes = new javax.swing.JButton[][]{{botao00, botao01, botao02},
                                              {botao10, botao11, botao12},
                                              {botao20, botao21, botao22}};
@@ -347,10 +351,12 @@ public class MatrizJogo extends javax.swing.JFrame {
     }//GEN-LAST:event_reiniciarActionPerformed
 
     private void iniciar() {
+        //Passando por todos os elementos da matriz pos e preenchendo com vazio cada elemento
         for(int i = 0; i < pos.length; i++) {
             for(int j = 0; j < pos[i].length; j++)
                 pos[i][j] = "";
         }
+        //Passando por todos os elementos da matriz de botoes, configurando e preenchendo com vazio cada elemento
         for(int i = 0; i < botoes.length; i++) {
             for(int j = 0; j < botoes[i].length; j++) {
                 botoes[i][j].setEnabled(true);
