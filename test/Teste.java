@@ -2,12 +2,15 @@ public class Teste {
 
     public static void main(String args[]) {
        int[] a = {1, 2, 3, 4, 5};
+       int b = 3;
        
-       a = shuffle(a);
+//       a = shuffle(a);
        
-       for(int i = 0; i < a.length; i++) {
-           System.out.println(a[i]);
-       }
+        System.out.println(intDouble_2(b));
+       
+//       for(int i = 0; i < a.length; i++) {
+//           System.out.println(a[i]);
+//       }
     }
     
     private static int[] shuffle(int[] vet) {
@@ -33,6 +36,10 @@ public class Teste {
         fim[fim.length-1] = sort[0];
         
         return fim;
+    }
+    
+    private static double intDouble_2(int n) {
+        return (double)n / 2;
     }
     
 }
