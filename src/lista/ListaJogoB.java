@@ -31,8 +31,8 @@ public class ListaJogoB extends JFrame {
 
     public ListaJogoB() {
         initComponents();
-        l_mensagem.setText(l_mensagem.getText() + IMG * 2);
         tocarSom("bgm", true, 0.075f);
+        iniciar();
 
         addKeyListener(new KeyAdapter() {
             public void keyPressed(KeyEvent evt) {
@@ -223,6 +223,7 @@ public class ListaJogoB extends JFrame {
     }//GEN-LAST:event_t_larguraKeyTyped
 
     private void iniciar() {
+        check = -1;
         l_mensagem.setFont(new Font(l_mensagem.getFont().getFontName(), Font.PLAIN, 18));
         l_mensagem.setForeground(Color.black);
         l_mensagem.setText("O tamanho mínimo (altura x largura) é 2 e o máximo " + IMG * 2);
