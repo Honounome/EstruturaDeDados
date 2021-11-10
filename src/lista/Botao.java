@@ -32,5 +32,29 @@ public class Botao extends JButton {
     public boolean taMostrando() {
         return (getIcon() != null);
     }
+    
+    public static int procurar(Botao[] btns, Botao btn) {
+        for (int i = 0; i < btns.length; i++)
+            if (btns[i].equals(btn))
+                return i;
+        return -1;
+    }
+    
+    public static void adicionar(Botao[] btns, Botao btn) {
+        Botao[] aux = new Botao[btns.length + 1];
+        for (int i = 0; i < aux.length; i++)
+            aux[i] = btns[i];
+        aux[aux.length] = btn;
+        btns = aux;
+    }
+    
+    public static void remover(Botao[] btns, Botao btn) {
+        Botao[] aux = new Botao[btns.length - 1];
+        int indice = procurar(btns, btn);
+        if (indice == -1) {return;}
+        for (int i = 0; i < aux.length; i++)
+            aux[i] = btns[i < indice ? i : i + 1];
+        btns = aux;
+    }
 
 }

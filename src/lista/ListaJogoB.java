@@ -21,7 +21,7 @@ import javax.swing.Timer;
 public class ListaJogoB extends JFrame {
 
     private final int ESP = 10;
-    private final int IMG = new java.io.File("src/lista/imagens/").listFiles().length;
+    private final int IMG = 18;
     long tempoEmMili;
     int[] imagens = new int[IMG];
     int[] relacao;
@@ -334,9 +334,7 @@ public class ListaJogoB extends JFrame {
 
             if (check < 0) {
                 check = numBotao;
-                System.out.println(numBotao + " " + check);
             } else {
-                System.out.println(numBotao + " " + check);
                 if (check / 2 == numBotao / 2) {
                     tocarSom("sucesso", 0.5f);
                     vitoria--;
@@ -357,7 +355,6 @@ public class ListaJogoB extends JFrame {
                         botao.setIcon(null);
                         botoes[relacao[check]].setIcon(null);
                         check = -1;
-                        System.out.println("Check = -1");
                         virarCartas.stop();
                     });
                     virarCartas.start();

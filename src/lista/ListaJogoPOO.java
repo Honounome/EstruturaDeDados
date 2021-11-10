@@ -21,13 +21,19 @@ import javax.swing.Timer;
 public class ListaJogoPOO extends JFrame {
 
     private final int ESP = 10;
-    private final int IMG = new java.io.File("src/lista/imagens/").listFiles().length;
+    private final int IMG = 18;
     long tempoEmMili;
     int[] imagens = new int[IMG];
     int[] relacao;
-    int x, y, larg, alt, vitoria, index, erros = 0;
+    int x, y, larg, alt, vitoria, index, erros;
     Timer virarCartas, mostrarCartas, terminar;
     Botao check;
+    
+    // vetor que vai servir como lista, dentro da classe dele há métodos
+    // para procurar, adicionar e remover elementos, mas eles não têm
+    // utilidade nesse código, por isso não os uso, todos os botões foram
+    // adicionados por meio do construtor e eles não precisam ser removidos
+    // ou encontrados em nenhum momento ao longo do código
     Botao[] btns;
 
     public ListaJogoPOO() {
@@ -223,6 +229,8 @@ public class ListaJogoPOO extends JFrame {
 
     private void iniciar() {
         check = null;
+        erros = 0;
+        tempoEmMili = 0;
         l_mensagem.setFont(new Font(l_mensagem.getFont().getFontName(), Font.PLAIN, 18));
         l_mensagem.setForeground(Color.black);
         l_mensagem.setText("O tamanho mínimo (altura x largura) é 2 e o máximo " + IMG * 2);
@@ -289,10 +297,8 @@ public class ListaJogoPOO extends JFrame {
 
             mostrarCartas = new Timer(btns.length * 150, (ActionEvent evt1) -> {
                 for (Botao btn : btns) {
-                    System.out.println("Esconder");
                     btn.esconderImagem();
                 }
-                System.out.println("Cheguei");
                 mostrarCartas.stop();
             });
             mostrarCartas.start();
@@ -373,10 +379,6 @@ public class ListaJogoPOO extends JFrame {
 
     private void tocarSom(String nome, float volume) {
         tocarSom(nome, false, volume);
-    }
-
-    private void tocarSom(String nome, boolean loop) {
-        tocarSom(nome, loop, 0.05f);
     }
 
     private static int[] embaralhar(int[] vet) {

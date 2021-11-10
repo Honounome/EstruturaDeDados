@@ -3,19 +3,25 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package estruturadedados;
+package fila;
 
 /**
  *
- * @author Edmax
+ * @author Edimax 
  */
-public class EstruturaDeDados {
+public class Fila {
 
     /**
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        // TODO code application logic here
+        
+        FilaExemplo f1 = new FilaExemplo();
+        f1.enfileira("elemento1");
+        f1.enfileira("elemento2");
+        System.out.println(f1.desenfileira());
+        f1.enfileira("elemento3");
+        System.out.println(f1.desenfileira());
     }
     
 }

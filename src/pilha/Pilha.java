@@ -3,19 +3,26 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package estruturadedados;
+package pilha;
 
 /**
  *
- * @author Edmax
+ * @author Edimax e Junior
  */
-public class EstruturaDeDados {
+public class Pilha {
 
     /**
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        // TODO code application logic here
+        
+        PilhaExemplo p1 = new PilhaExemplo();
+        p1.Empilha("el01");
+        p1.Empilha("el02");
+        p1.Empilha("el03");
+        p1.Empilha("el04");
+        System.out.println(p1.Desempilha());
+        System.out.println(p1.Desempilha());
     }
     
 }
