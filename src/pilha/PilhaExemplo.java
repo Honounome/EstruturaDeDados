@@ -6,47 +6,39 @@ public class PilhaExemplo {
     
     private No base;
     private No topo;
-    private String nomeDaPilha;
+    private int tam = 0;
     
-    public PilhaExemplo(String nome){
-        nomeDaPilha = nome;
-        
+    public PilhaExemplo() {
         base = topo = null;
     }
     
-    public PilhaExemplo(){
-        nomeDaPilha = "Pilha Teste";
-        base = topo = null;
+    public No get() {
+        return topo;
     }
     
-    public void Empilha(String item){
-        if(Vazia())
+    public int tam() {
+        return tam;
+    }
+    
+    public void empilha(String item) {
+        if(vazia())
             base = topo = new No(item);
-        else{
-            topo.setProx(new No(item));
-            topo = topo.getProx();
-        }
+        else
+            topo = new No(item, topo);
+        tam++;
     }
     
-    public String Desempilha(){
-        if(Vazia()){
-            return null;
-        }
-        String item = topo.getDado();
+    public void desempilha() {
+        if(vazia())
+            return;
         if(base == topo)
             base = topo = null;
-        else{
-            No atual = base;
-            while (atual.getProx() != topo)
-                atual = atual.getProx();
-            topo = atual;
-            atual.setProx(null);
-        }
-        return item;
+        else
+            topo = topo.getProx();
+        tam--;
     }
     
-    public boolean Vazia(){
-        
+    public boolean vazia(){
         return base == null;
     }
 }
