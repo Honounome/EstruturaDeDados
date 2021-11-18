@@ -18,21 +18,24 @@ import javax.swing.Timer;
 public class JogoDasGarrafas extends javax.swing.JFrame {
 
     // variáveis de configuração
-    final int BORDA = 5;
-    final int TAM = 3;
-    final int OX = 12;
-    final int OY = -11;
-    final double FRASCO = 50;
+    final int BORDA = 5; // até quantos pixels da borda o label pode ir
+    final int TAM = 3; // quantidade de garrafas na versão de output
+    final int OX = 12; // (O)ffset (X) do mouse que o label fica quando clicado
+    final int OY = -11; // (O)ffset (Y) do mouse que o label fica quando clicado
+    final double FRASCO = 50; // vai servir pro tamanho das coisas
     
     // outras variáveis
-    private static int x, y;
-    JLabel arrastado = new JLabel();
-    PilhaExemplo[] garrafas = new PilhaExemplo[TAM];
-    Scanner scan = new Scanner(System.in);
-    Timer arrastar;
+    private static int x, y; // guardam a posição padrão do label arrastado
+    JLabel arrastado = new JLabel(); // guarda o label que vai ser arrastado
+    PilhaExemplo[] garrafas = new PilhaExemplo[TAM]; // vetor de pilhas
+    Scanner scan = new Scanner(System.in); // tu sabe
+    Timer arrastar; // atualiza a posição de "arrastado" numa taxa constante
 
     public JogoDasGarrafas() {
+        // método gerado automaticamente
         initComponents();
+        
+        // serve para configurar o estado inicial da versão de output
         for (int i = 0; i < TAM; i++) {
             garrafas[i] = new PilhaExemplo();
             garrafas[i].empilha("verde");
@@ -40,6 +43,9 @@ public class JogoDasGarrafas extends javax.swing.JFrame {
             garrafas[i].empilha("azul");
         }
 
+        // evento que atualiza a 144Hz a posição do objeto arrastado
+        // de acordo com a posição do mouse (não sei se esse try e catch ainda
+        // são necessários, já devo ter me livrado da causa do problema)
         arrastar = new Timer(1000 / 144, (ActionEvent evt1) -> {
             try {
                 arrastado.setBounds(limiteX(), limiteY(), arrastado.getBounds().width, arrastado.getBounds().height);
@@ -49,21 +55,37 @@ public class JogoDasGarrafas extends javax.swing.JFrame {
             }
 
         });
+        
+        // define as imagens dos 2 labels que temos por enquanto
         imagem(jLabel1, "tubo");
-        imagem(jLabel2, "fundo tubo");
+        imagem(jLabel2, "fundo tubo", new Color(125, 30, 10));
+        
+        // descomentar as 2 linhas abaixo para ativar a versão de output
         //printar();
         //gameloop();
     }
     
+    // método chamado toda vez que um dos labels é clicado
     private void arrastar(JLabel label, MouseEvent evt) {
+        // se o jogador conseguir magicamente clicar no botão que ele tá 
+        // arrastando nada vai acontecer pq esse if nos protege
         if (arrastado.equals(label)) {
             return;
         }
+        
+        // se o timer estiver ativo, quer dizer que o jogador já clicou em
+        // um label e está clicando no segundo agora, então o timer é 
+        // desativado e o label que estava seguindo o mouse volta 
+        // à sua posição original
         if (arrastar.isRunning()) {
             arrastar.stop();
             arrastado.setBounds(x, y, arrastado.getBounds().width,
                     arrastado.getBounds().height);
             arrastado = new JLabel();
+        
+        // caso o timer esteja desativado, quer dizer que o jogador clicou no
+        // primeiro label, então o programa salva a posição dele, o define
+        // como o label que vai ser arrastado e inicia o timer
         } else {
             x = label.getBounds().x;
             y = label.getBounds().y;
@@ -72,26 +94,36 @@ public class JogoDasGarrafas extends javax.swing.JFrame {
         }
     }
 
+    // comanda todo o funcionamento da versão para output
     private void gameloop() {
-        int qual;
-        No atual;
-        PilhaExemplo garrafa;
+        int qual; // guarda a qual garrafa foi escolhida
+        No atual; // percorre as garrafas
+        
+        // guarda o(s) nó(s) a serem passados para outra garrafa
+        PilhaExemplo garrafa; 
+        
+        // preenche o objeto "garrafa" 
         while (true) {
             garrafa = new PilhaExemplo();
             System.out.println("De qual garrafa você quer tirar? ");
             qual = scan.nextInt();
             atual = garrafas[qual - 1].get();
+            
+            // isso aqui roda até que o próximo nó não tenha mais a mesma cor
+            // que o atual
             while (true) {
                 garrafa.empilha(atual.getDado());
                 garrafas[qual - 1].desempilha();
-                if (atual.getProx() == null
-                        || !atual.getDado().equals(atual.getProx().getDado())) {
+                if (atual.getProx() == null || !atual.getDado().equals(atual.getProx().getDado())) {
                     break;
                 }
                 atual = atual.getProx();
             }
             System.out.println("Em qual garrafa você quer por? ");
             qual = scan.nextInt();
+            
+            // criei um método "tam()" na classe "PilhaExemplo" pra
+            // facilitar minha vida
             for (int i = 0; i < garrafa.tam(); i++) {
                 garrafas[qual - 1].empilha(garrafa.get().getDado());
             }
@@ -99,8 +131,9 @@ public class JogoDasGarrafas extends javax.swing.JFrame {
         }
     }
 
+    // imprime o conteúdo de todas as pilhas do vetor "garrafas"
     private void printar() {
-        No atual;
+        No atual; // passa por cada nó de cada pilha
         for (int i = 0; i < TAM; i++) {
             atual = garrafas[i].get();
             for (int j = 0; j < garrafas[i].tam(); j++) {
@@ -111,6 +144,10 @@ public class JogoDasGarrafas extends javax.swing.JFrame {
         }
     }
 
+    // define a posição horizontal mínima e máxima que o label pode ser
+    // arrastado, os cálculos levam em consideração a posição do mouse na
+    // tela e a posição da janela do jogo, assim como os offsets e
+    // o tamanho do label
     private int limiteX() {
         if (MouseInfo.getPointerInfo().getLocation().x - getLocationOnScreen().x < BORDA - OX)
             return BORDA;
@@ -119,6 +156,7 @@ public class JogoDasGarrafas extends javax.swing.JFrame {
         return MouseInfo.getPointerInfo().getLocation().x - getLocationOnScreen().x + OX;
     }
 
+    // mesma coisa que o anterior só que vertical
     private int limiteY() {
         if (MouseInfo.getPointerInfo().getLocation().y - getLocationOnScreen().y < BORDA - OY)
             return BORDA;
@@ -127,9 +165,16 @@ public class JogoDasGarrafas extends javax.swing.JFrame {
         return MouseInfo.getPointerInfo().getLocation().y - getLocationOnScreen().y + OY;
     }
 
+    // põe uma imagem num label de acordo com os parâmetros, a cor é opcional
+    // e pode ser adicionada num formato RGB como na linha 61
     private void imagem(JLabel label, String nome, Color cor) {
+        // essas "BufferedImage"s permitem que a gente mude a cor da imagem
+        // a "buff" vai pegar a imagem de acordo com o caminho dela (linha 179)
+        // e "conv" vai converter "buff" pra um espectro de cores mais
+        // conveniente para os nossos propósitos
         BufferedImage buff;
         BufferedImage conv;
+        
         try {
             buff = ImageIO.read(new File("src/pilha/imagens/" + nome + ".png"));
             conv = new BufferedImage(buff.getWidth(), buff.getHeight(), BufferedImage.TYPE_4BYTE_ABGR);
@@ -139,6 +184,10 @@ public class JogoDasGarrafas extends javax.swing.JFrame {
             return;
         }
 
+        // Se o parâmetro "cor" não for informado ele 
+        // recebe "null" por padrão (linha 212) e a imagem não é alterada
+        // caso ele receba alguma cor, então essa cor vai substituir o
+        // preto padrão presente nas imagens do projeto
         if (cor != null) {
             for (int i = 0; i < conv.getWidth(); i++) {
                 for (int j = 0; j < conv.getHeight(); j++) {
@@ -148,13 +197,18 @@ public class JogoDasGarrafas extends javax.swing.JFrame {
                 }
             }
         }
-
+        
+        // o programa coloca a "BufferedImage" em um "ImageIcon" de acordo com
+        // um certo tamanho, muda o tamanho do label para que a imagem não fique
+        // cortada e coloca a imagem no label
         ImageIcon img = new ImageIcon(((Image) conv).getScaledInstance(50, -1, 1));
         label.setBorder(null);
         label.setBounds(label.getBounds().x, label.getBounds().y, img.getIconWidth(), img.getIconHeight());
         label.setIcon(img);
     }
 
+    // pra cá que o programa vem quando o parâmetro "cor" não é informado
+    // por isso que o padrão é "null"
     private void imagem(JLabel label, String nome) {
         imagem(label, nome, null);
     }
