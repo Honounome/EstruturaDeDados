@@ -1,5 +1,3 @@
-// é a potência
-
 package lista;
 
 import java.awt.CardLayout;

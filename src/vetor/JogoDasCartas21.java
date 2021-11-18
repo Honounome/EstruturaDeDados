@@ -1,5 +1,7 @@
 package vetor;
 
+import java.awt.Graphics;
+import java.awt.Graphics2D;
 import javax.swing.ImageIcon;
 
 public class JogoDasCartas21 extends javax.swing.JFrame {

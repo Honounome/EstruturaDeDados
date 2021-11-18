@@ -1,21 +1,32 @@
 package pilha;
 
 import estruturadedados.No;
+import java.awt.Color;
+import java.awt.Image;
 import java.awt.MouseInfo;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseEvent;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.util.Scanner;
+import javax.imageio.ImageIO;
+import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.Timer;
 
 public class JogoDasGarrafas extends javax.swing.JFrame {
 
-    private static int x, y;
-    JLabel arrastado = new JLabel();
+    // variáveis de configuração
+    final int BORDA = 5;
     final int TAM = 3;
     final int OX = 12;
     final int OY = -11;
-    boolean click = false;
+    final double FRASCO = 50;
+    
+    // outras variáveis
+    private static int x, y;
+    JLabel arrastado = new JLabel();
     PilhaExemplo[] garrafas = new PilhaExemplo[TAM];
     Scanner scan = new Scanner(System.in);
     Timer arrastar;
@@ -29,27 +40,123 @@ public class JogoDasGarrafas extends javax.swing.JFrame {
             garrafas[i].empilha("azul");
         }
 
-        arrastar = new Timer(1000/144, (ActionEvent evt1) -> {
+        arrastar = new Timer(1000 / 144, (ActionEvent evt1) -> {
             try {
-                System.out.println("Xm: " + (MouseInfo.getPointerInfo().getLocation().x + OX));
-                System.out.println("Xt: " + getLocationOnScreen().x);
-                arrastado.setBounds(limiteX(),
-                                    limiteY(),
-                                    arrastado.getBounds().width,
-                                    arrastado.getBounds().height);
-                
-//                arrastado.setBounds(getMousePosition(true).x + OX,
-//                                    getMousePosition(true).y + OY,
-//                                    arrastado.getBounds().width,
-//                                    arrastado.getBounds().height);
+                arrastado.setBounds(limiteX(), limiteY(), arrastado.getBounds().width, arrastado.getBounds().height);
             } catch (Exception ex) {
-                System.out.println("Erro");
+                System.out.println("Deu merda");
                 arrastar.restart();
             }
-            
+
         });
+        imagem(jLabel1, "tubo");
+        imagem(jLabel2, "fundo tubo");
         //printar();
         //gameloop();
+    }
+    
+    private void arrastar(JLabel label, MouseEvent evt) {
+        if (arrastado.equals(label)) {
+            return;
+        }
+        if (arrastar.isRunning()) {
+            arrastar.stop();
+            arrastado.setBounds(x, y, arrastado.getBounds().width,
+                    arrastado.getBounds().height);
+            arrastado = new JLabel();
+        } else {
+            x = label.getBounds().x;
+            y = label.getBounds().y;
+            arrastado = label;
+            arrastar.start();
+        }
+    }
+
+    private void gameloop() {
+        int qual;
+        No atual;
+        PilhaExemplo garrafa;
+        while (true) {
+            garrafa = new PilhaExemplo();
+            System.out.println("De qual garrafa você quer tirar? ");
+            qual = scan.nextInt();
+            atual = garrafas[qual - 1].get();
+            while (true) {
+                garrafa.empilha(atual.getDado());
+                garrafas[qual - 1].desempilha();
+                if (atual.getProx() == null
+                        || !atual.getDado().equals(atual.getProx().getDado())) {
+                    break;
+                }
+                atual = atual.getProx();
+            }
+            System.out.println("Em qual garrafa você quer por? ");
+            qual = scan.nextInt();
+            for (int i = 0; i < garrafa.tam(); i++) {
+                garrafas[qual - 1].empilha(garrafa.get().getDado());
+            }
+            printar();
+        }
+    }
+
+    private void printar() {
+        No atual;
+        for (int i = 0; i < TAM; i++) {
+            atual = garrafas[i].get();
+            for (int j = 0; j < garrafas[i].tam(); j++) {
+                System.out.println(String.format("%10s", atual.getDado()));
+                atual = atual.getProx();
+            }
+            System.out.println();
+        }
+    }
+
+    private int limiteX() {
+        if (MouseInfo.getPointerInfo().getLocation().x - getLocationOnScreen().x < BORDA - OX)
+            return BORDA;
+        if (MouseInfo.getPointerInfo().getLocation().x - getLocationOnScreen().x > 500 - BORDA - arrastado.getBounds().width - OX)
+            return 500 - BORDA - arrastado.getBounds().width;
+        return MouseInfo.getPointerInfo().getLocation().x - getLocationOnScreen().x + OX;
+    }
+
+    private int limiteY() {
+        if (MouseInfo.getPointerInfo().getLocation().y - getLocationOnScreen().y < BORDA - OY)
+            return BORDA;
+        if (MouseInfo.getPointerInfo().getLocation().y - getLocationOnScreen().y > 500 - BORDA - arrastado.getBounds().height - OY)
+            return 500 - BORDA - arrastado.getBounds().height;
+        return MouseInfo.getPointerInfo().getLocation().y - getLocationOnScreen().y + OY;
+    }
+
+    private void imagem(JLabel label, String nome, Color cor) {
+        BufferedImage buff;
+        BufferedImage conv;
+        try {
+            buff = ImageIO.read(new File("src/pilha/imagens/" + nome + ".png"));
+            conv = new BufferedImage(buff.getWidth(), buff.getHeight(), BufferedImage.TYPE_4BYTE_ABGR);
+            conv.getGraphics().drawImage(buff, 0, 0, null);
+        } catch (IOException ex) {
+            System.out.println("Arquivo não encontrado");
+            return;
+        }
+
+        if (cor != null) {
+            for (int i = 0; i < conv.getWidth(); i++) {
+                for (int j = 0; j < conv.getHeight(); j++) {
+                    if (conv.getRGB(i, j) == Color.BLACK.getRGB()) {
+                        conv.setRGB(i, j, cor.getRGB());
+                    }
+                }
+            }
+        }
+
+        ImageIcon img = new ImageIcon(((Image) conv).getScaledInstance(50, -1, 1));
+        label.setBorder(null);
+        label.setBounds(label.getBounds().x, label.getBounds().y, img.getIconWidth(), img.getIconHeight());
+        label.setIcon(img);
+    }
+
+    private void imagem(JLabel label, String nome) {
+        imagem(label, nome, null);
     }
 
     @SuppressWarnings("unchecked")
@@ -150,75 +257,4 @@ public class JogoDasGarrafas extends javax.swing.JFrame {
     private javax.swing.JPanel p_inicio;
     private javax.swing.JPanel p_principal;
     // End of variables declaration//GEN-END:variables
-
-    private void arrastar(JLabel label, MouseEvent evt) {
-        if(arrastado.equals(label))
-            return;
-        if(arrastar.isRunning()){
-            arrastar.stop();
-            arrastado.setBounds(x, y, arrastado.getBounds().width,
-                    arrastado.getBounds().height);
-            arrastado = new JLabel();
-        } else {
-            x = label.getBounds().x;
-            y = label.getBounds().y;
-            arrastado = label;
-            arrastar.start();
-        }
-    }
-
-    private void gameloop() {
-        int qual;
-        No atual;
-        PilhaExemplo garrafa;
-        while (true) {
-            garrafa = new PilhaExemplo();
-            System.out.println("De qual garrafa você quer tirar? ");
-            qual = scan.nextInt();
-            atual = garrafas[qual - 1].get();
-            while (true) {
-                garrafa.empilha(atual.getDado());
-                garrafas[qual - 1].desempilha();
-                if (atual.getProx() == null
-                        || !atual.getDado().equals(atual.getProx().getDado())) {
-                    break;
-                }
-                atual = atual.getProx();
-            }
-            System.out.println("Em qual garrafa você quer por? ");
-            qual = scan.nextInt();
-            for (int i = 0; i < garrafa.tam(); i++) {
-                garrafas[qual - 1].empilha(garrafa.get().getDado());
-            }
-            printar();
-        }
-    }
-
-    private void printar() {
-        No atual;
-        for (int i = 0; i < TAM; i++) {
-            atual = garrafas[i].get();
-            for (int j = 0; j < garrafas[i].tam(); j++) {
-                System.out.println(String.format("%10s", atual.getDado()));
-                atual = atual.getProx();
-            }
-            System.out.println();
-        }
-    }
-    
-    private int limiteX() {
-        if(MouseInfo.getPointerInfo().getLocation().x < getLocationOnScreen().x)
-            return OX;
-        if(MouseInfo.getPointerInfo().getLocation().x > getLocationOnScreen().x + 500 - arrastado.getBounds().width - 2*OX)
-            return 500 - OX - arrastado.getBounds().width;
-        return MouseInfo.getPointerInfo().getLocation().x - getLocationOnScreen().x + OX;
-    }
-    
-    private int limiteY() {
-        if(MouseInfo.getPointerInfo().getLocation().y < getLocationOnScreen().y + 31)
-            return OY;
-        if(MouseInfo.getPointerInfo().getLocation().y > getLocationOnScreen().y + 500 - arrastado.getBounds().height - 2*OY)
-            return 500 - OY - arrastado.getBounds().height;
-        return MouseInfo.getPointerInfo().getLocation().y - getLocationOnScreen().y + OY;
-    }
 }

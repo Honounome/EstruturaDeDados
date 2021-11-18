@@ -28,7 +28,7 @@ public class ListaJogoPOO extends JFrame {
     int x, y, larg, alt, vitoria, index, erros;
     Timer virarCartas, mostrarCartas, terminar;
     Botao check;
-    
+
     // vetor que vai servir como lista, dentro da classe dele há métodos
     // para procurar, adicionar e remover elementos, mas eles não têm
     // utilidade nesse código, por isso não os uso, todos os botões foram
@@ -144,6 +144,11 @@ public class ListaJogoPOO extends JFrame {
         b_jogar.setFont(new java.awt.Font("Arial Rounded MT Bold", 0, 36)); // NOI18N
         b_jogar.setText("JOGAR");
         b_jogar.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        b_jogar.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                b_jogarMousePressed(evt);
+            }
+        });
         b_jogar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 b_jogarActionPerformed(evt);
@@ -227,6 +232,10 @@ public class ListaJogoPOO extends JFrame {
             evt.consume();
     }//GEN-LAST:event_t_larguraKeyTyped
 
+    private void b_jogarMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_b_jogarMousePressed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_b_jogarMousePressed
+
     private void iniciar() {
         check = null;
         erros = 0;
@@ -290,7 +299,12 @@ public class ListaJogoPOO extends JFrame {
                     }
                     btns[index] = new Botao(new ImageIcon(getClass().getResource("/lista/imagens/" + imagens[relacao[index]] + ".png")), x, y);
                     btns[index].mostrarImagem();
-                    btns[index].addActionListener(this::cliqueBotao);
+                    btns[index].addMouseListener(new java.awt.event.MouseAdapter() {
+                        @Override
+                        public void mousePressed(java.awt.event.MouseEvent evt) {
+                            cliqueBotao(evt);
+                        }
+                    });
                     p_jogo.add(btns[index], new org.netbeans.lib.awtextra.AbsoluteConstraints(ESP * (j + 1) + x * j, ESP * (i + 1) + y * i, x, y));
                 }
             }
@@ -307,7 +321,7 @@ public class ListaJogoPOO extends JFrame {
         }
     }
 
-    private void cliqueBotao(java.awt.event.ActionEvent evt) {
+    private void cliqueBotao(java.awt.event.MouseEvent evt) {
         Botao botao = (Botao) evt.getSource();
 
         if (tempoEmMili == 0) {
