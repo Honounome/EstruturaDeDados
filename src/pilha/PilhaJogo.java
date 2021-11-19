@@ -1,41 +1,71 @@
 package pilha;
 
-public class PilhaJogo {
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Image;
+import java.awt.event.ActionListener;
+import java.awt.image.BufferedImage;
+import javax.swing.JLabel;
+
+public class PilhaJogo extends JLabel {
+
+    //private final ImageIcon imagem;
     private NoJogo base;
     private NoJogo topo;
-    private int tam = 0;
-    
-    public PilhaJogo() {
+    private int qnt = 0;
+    public int espaco;
+
+    public PilhaJogo(){
+        espaco = defEspaco(JogoDasGarrafas.imagem(JogoDasGarrafas.DIMENSAO, this, "tubo"));
+        this.setPreferredSize(new Dimension(this.getIcon().getIconWidth(), this.getIcon().getIconHeight()));
         base = topo = null;
     }
-    
+
     public NoJogo get() {
         return topo;
     }
-    
-    public int tam() {
-        return tam;
+
+    public int qnt() {
+        return qnt;
     }
-    
-    public void empilha(String item) {
-        if(vazia())
-            base = topo = new NoJogo(item);
-        else
-            topo = new NoJogo(item, topo);
-        tam++;
+
+    public void empilha(Color item) {
+        if (vazia()) {
+            base = topo = new NoJogo(this, "fundo", item);
+            this.add(topo);
+            topo.setBounds((int)(getWidth() * 19f/256f + 0.5), (int)(getHeight() * 109f/500f * 7f/2f + 0.5), topo.getPreferredSize().width, topo.getPreferredSize().height);
+        } else {
+            topo = new NoJogo(this, "quadrado", item, topo);
+            add(topo);
+            topo.setBounds((int)(getWidth() * 19f/256f + 0.5), (int)(getHeight() * 109f/500f * (4 - qnt - 0.5)), topo.getPreferredSize().width, topo.getPreferredSize().height);
+        }
+        qnt++;
     }
-    
+
     public void desempilha() {
-        if(vazia())
+        if (vazia()) {
             return;
-        if(base == topo)
+        }
+        if (base == topo) {
             base = topo = null;
-        else
+        } else {
+            remove(topo);
             topo = topo.getProx();
-        tam--;
+        }
+        qnt--;
+    }
+
+    public boolean vazia() {
+        return qnt == 0;
     }
     
-    public boolean vazia(){
-        return base == null;
+    private int defEspaco(Image img) {
+        BufferedImage buff = new BufferedImage(img.getWidth(null), img.getHeight(null), BufferedImage.TYPE_4BYTE_ABGR);
+        buff.getGraphics().drawImage(img, 0, 0, null);
+        int cont = 0;
+        for(int x = 0; x < buff.getWidth(); x++)
+            if(buff.getRGB(x, 0) != Color.black.getRGB())
+                cont++;
+        return cont;
     }
 }

@@ -1,24 +1,39 @@
 package pilha;
 
-public class NoJogo {
-    private String dado;
+import java.awt.Color;
+import javax.swing.ImageIcon;
+import javax.swing.JLabel;
+
+public class NoJogo extends JLabel{
+    private Color dado;
+    private ImageIcon imagem;
     private NoJogo prox;
     
-    public NoJogo(String dadoNovo) {
+    public NoJogo(PilhaJogo parent, String tipo, Color dadoNovo) {
         this.dado = dadoNovo;
         this.prox = null;
+        JogoDasGarrafas.imagem(parent.espaco, this, tipo, dado);
     }
     
-    public NoJogo(String dadoNovo, NoJogo ligacao) {
+    public NoJogo(PilhaJogo parent, String tipo, Color dadoNovo, NoJogo ligacao) {
         this.dado = dadoNovo;
         this.prox = ligacao;
+        JogoDasGarrafas.imagem(parent.espaco, this, tipo, dado);
     }
-    
-    public String getDado() {
+
+    public ImageIcon getImagem() {
+        return imagem;
+    }
+
+    public void setImagem(ImageIcon imagem) {
+        this.imagem = imagem;
+    }
+
+    public Color getDado() {
         return dado;
     }
     
-    public void setDado(String dado) {
+    public void setDado(Color dado) {
         this.dado = dado;
     }
     

@@ -2,6 +2,7 @@ package pilha;
 
 import estruturadedados.No;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Image;
 import java.awt.MouseInfo;
 import java.awt.event.ActionEvent;
@@ -22,31 +23,23 @@ public class JogoDasGarrafas extends javax.swing.JFrame {
     final int TAM = 3; // quantidade de garrafas na versão de output
     final int OX = 12; // (O)ffset (X) do mouse que o label fica quando clicado
     final int OY = -11; // (O)ffset (Y) do mouse que o label fica quando clicado
-    final double FRASCO = 50; // vai servir pro tamanho das coisas
-    
+    final static int DIMENSAO = 40; // vai servir pro tamanho das coisas
+
     // outras variáveis
     private static int x, y; // guardam a posição padrão do label arrastado
     JLabel arrastado = new JLabel(); // guarda o label que vai ser arrastado
-    PilhaExemplo[] garrafas = new PilhaExemplo[TAM]; // vetor de pilhas
+    PilhaJogo[] garrafas = new PilhaJogo[TAM];
     Scanner scan = new Scanner(System.in); // tu sabe
     Timer arrastar; // atualiza a posição de "arrastado" numa taxa constante
 
     public JogoDasGarrafas() {
         // método gerado automaticamente
         initComponents();
-        
-        // serve para configurar o estado inicial da versão de output
-        for (int i = 0; i < TAM; i++) {
-            garrafas[i] = new PilhaExemplo();
-            garrafas[i].empilha("verde");
-            garrafas[i].empilha("amarelo");
-            garrafas[i].empilha("azul");
-        }
 
-        // evento que atualiza a 144Hz a posição do objeto arrastado
+        // evento que atualiza a 60Hz a posição do objeto arrastado
         // de acordo com a posição do mouse (não sei se esse try e catch ainda
         // são necessários, já devo ter me livrado da causa do problema)
-        arrastar = new Timer(1000 / 144, (ActionEvent evt1) -> {
+        arrastar = new Timer(1000 / 60, (ActionEvent evt1) -> {
             try {
                 arrastado.setBounds(limiteX(), limiteY(), arrastado.getBounds().width, arrastado.getBounds().height);
             } catch (Exception ex) {
@@ -55,24 +48,36 @@ public class JogoDasGarrafas extends javax.swing.JFrame {
             }
 
         });
-        
+
+        for (int i = 0; i < TAM; i++) {
+            garrafas[i] = new PilhaJogo();
+            garrafas[i].addMouseListener(new java.awt.event.MouseAdapter() {
+                @Override
+                public void mousePressed(java.awt.event.MouseEvent evt) {
+                    arrastar(evt);
+                }
+            });
+            p_inicio.add(garrafas[i]);
+            garrafas[i].setBounds(500/3 * (i+1) - garrafas[i].getIcon().getIconWidth()/2 - 500/6, 250 - garrafas[i].getIcon().getIconHeight()/2, garrafas[i].getPreferredSize().width, garrafas[i].getPreferredSize().height);
+        }
+
         // define as imagens dos 2 labels que temos por enquanto
-        imagem(jLabel1, "tubo");
-        imagem(jLabel2, "fundo tubo", new Color(125, 30, 10));
-        
         // descomentar as 2 linhas abaixo para ativar a versão de output
         //printar();
         //gameloop();
     }
-    
+
     // método chamado toda vez que um dos labels é clicado
-    private void arrastar(JLabel label, MouseEvent evt) {
+    private void arrastar(java.awt.event.MouseEvent evt) {
+        JLabel label = (JLabel) evt.getSource();
+        System.out.println(label.toString());
+        System.out.println(garrafas[0].toString());
         // se o jogador conseguir magicamente clicar no botão que ele tá 
         // arrastando nada vai acontecer pq esse if nos protege
         if (arrastado.equals(label)) {
             return;
         }
-        
+
         // se o timer estiver ativo, quer dizer que o jogador já clicou em
         // um label e está clicando no segundo agora, então o timer é 
         // desativado e o label que estava seguindo o mouse volta 
@@ -82,10 +87,10 @@ public class JogoDasGarrafas extends javax.swing.JFrame {
             arrastado.setBounds(x, y, arrastado.getBounds().width,
                     arrastado.getBounds().height);
             arrastado = new JLabel();
-        
-        // caso o timer esteja desativado, quer dizer que o jogador clicou no
-        // primeiro label, então o programa salva a posição dele, o define
-        // como o label que vai ser arrastado e inicia o timer
+
+            // caso o timer esteja desativado, quer dizer que o jogador clicou no
+            // primeiro label, então o programa salva a posição dele, o define
+            // como o label que vai ser arrastado e inicia o timer
         } else {
             x = label.getBounds().x;
             y = label.getBounds().y;
@@ -98,17 +103,17 @@ public class JogoDasGarrafas extends javax.swing.JFrame {
     private void gameloop() {
         int qual; // guarda a qual garrafa foi escolhida
         No atual; // percorre as garrafas
-        
+
         // guarda o(s) nó(s) a serem passados para outra garrafa
-        PilhaExemplo garrafa; 
-        
+        PilhaExemplo garrafa;
+
         // preenche o objeto "garrafa" 
         while (true) {
             garrafa = new PilhaExemplo();
             System.out.println("De qual garrafa você quer tirar? ");
             qual = scan.nextInt();
             atual = garrafas[qual - 1].get();
-            
+
             // isso aqui roda até que o próximo nó não tenha mais a mesma cor
             // que o atual
             while (true) {
@@ -121,7 +126,7 @@ public class JogoDasGarrafas extends javax.swing.JFrame {
             }
             System.out.println("Em qual garrafa você quer por? ");
             qual = scan.nextInt();
-            
+
             // criei um método "tam()" na classe "PilhaExemplo" pra
             // facilitar minha vida
             for (int i = 0; i < garrafa.tam(); i++) {
@@ -149,40 +154,45 @@ public class JogoDasGarrafas extends javax.swing.JFrame {
     // tela e a posição da janela do jogo, assim como os offsets e
     // o tamanho do label
     private int limiteX() {
-        if (MouseInfo.getPointerInfo().getLocation().x - getLocationOnScreen().x < BORDA - OX)
+        if (MouseInfo.getPointerInfo().getLocation().x - getLocationOnScreen().x < BORDA - OX) {
             return BORDA;
-        if (MouseInfo.getPointerInfo().getLocation().x - getLocationOnScreen().x > 500 - BORDA - arrastado.getBounds().width - OX)
+        }
+        if (MouseInfo.getPointerInfo().getLocation().x - getLocationOnScreen().x > 500 - BORDA - arrastado.getBounds().width - OX) {
             return 500 - BORDA - arrastado.getBounds().width;
+        }
         return MouseInfo.getPointerInfo().getLocation().x - getLocationOnScreen().x + OX;
     }
 
     // mesma coisa que o anterior só que vertical
     private int limiteY() {
-        if (MouseInfo.getPointerInfo().getLocation().y - getLocationOnScreen().y < BORDA - OY)
+        if (MouseInfo.getPointerInfo().getLocation().y - getLocationOnScreen().y < BORDA - OY) {
             return BORDA;
-        if (MouseInfo.getPointerInfo().getLocation().y - getLocationOnScreen().y > 500 - BORDA - arrastado.getBounds().height - OY)
+        }
+        if (MouseInfo.getPointerInfo().getLocation().y - getLocationOnScreen().y > 500 - BORDA - arrastado.getBounds().height - OY) {
             return 500 - BORDA - arrastado.getBounds().height;
+        }
         return MouseInfo.getPointerInfo().getLocation().y - getLocationOnScreen().y + OY;
     }
 
     // põe uma imagem num label de acordo com os parâmetros, a cor é opcional
     // e pode ser adicionada num formato RGB como na linha 61
-    private void imagem(JLabel label, String nome, Color cor) {
+    public static Image imagem(int dimensao, JLabel label, String nome, Color cor) {
         // essas "BufferedImage"s permitem que a gente mude a cor da imagem
         // a "buff" vai pegar a imagem de acordo com o caminho dela (linha 179)
         // e "conv" vai converter "buff" pra um espectro de cores mais
         // conveniente para os nossos propósitos
         BufferedImage buff;
         BufferedImage conv;
-        
+
         try {
             buff = ImageIO.read(new File("src/pilha/imagens/" + nome + ".png"));
-            conv = new BufferedImage(buff.getWidth(), buff.getHeight(), BufferedImage.TYPE_4BYTE_ABGR);
-            conv.getGraphics().drawImage(buff, 0, 0, null);
         } catch (IOException ex) {
             System.out.println("Arquivo não encontrado");
-            return;
+            return null;
         }
+
+        conv = new BufferedImage(buff.getWidth(), buff.getHeight(), BufferedImage.TYPE_4BYTE_ABGR);
+        conv.getGraphics().drawImage(buff, 0, 0, null);
 
         // Se o parâmetro "cor" não for informado ele 
         // recebe "null" por padrão (linha 212) e a imagem não é alterada
@@ -197,20 +207,22 @@ public class JogoDasGarrafas extends javax.swing.JFrame {
                 }
             }
         }
-        
+
         // o programa coloca a "BufferedImage" em um "ImageIcon" de acordo com
         // um certo tamanho, muda o tamanho do label para que a imagem não fique
         // cortada e coloca a imagem no label
-        ImageIcon img = new ImageIcon(((Image) conv).getScaledInstance(50, -1, 1));
-        label.setBorder(null);
-        label.setBounds(label.getBounds().x, label.getBounds().y, img.getIconWidth(), img.getIconHeight());
+        ImageIcon img = new ImageIcon(conv.getScaledInstance(dimensao, -1, 1));
+        label.setPreferredSize(new Dimension(img.getIconWidth(), img.getIconHeight()));
         label.setIcon(img);
+
+        System.out.printf("%nDimensão: %d%nLabel: %s%nImagem: %s%nCor: %s%n", dimensao, label, nome, (cor == null ? "Padrão" : cor.toString()));
+        return conv.getScaledInstance(dimensao, -1, 1);
     }
 
     // pra cá que o programa vem quando o parâmetro "cor" não é informado
     // por isso que o padrão é "null"
-    private void imagem(JLabel label, String nome) {
-        imagem(label, nome, null);
+    public static Image imagem(int dimensao, JLabel label, String nome) {
+        return imagem(dimensao, label, nome, null);
     }
 
     @SuppressWarnings("unchecked")
@@ -219,8 +231,6 @@ public class JogoDasGarrafas extends javax.swing.JFrame {
 
         p_principal = new javax.swing.JPanel();
         p_inicio = new javax.swing.JPanel();
-        jLabel1 = new javax.swing.JLabel();
-        jLabel2 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setMinimumSize(new java.awt.Dimension(500, 500));
@@ -230,26 +240,6 @@ public class JogoDasGarrafas extends javax.swing.JFrame {
 
         p_inicio.setMinimumSize(new java.awt.Dimension(500, 500));
         p_inicio.setLayout(null);
-
-        jLabel1.setText("Label 1");
-        jLabel1.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
-        jLabel1.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mousePressed(java.awt.event.MouseEvent evt) {
-                jLabel1MousePressed(evt);
-            }
-        });
-        p_inicio.add(jLabel1);
-        jLabel1.setBounds(66, 74, 60, 18);
-
-        jLabel2.setText("Label 2");
-        jLabel2.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mousePressed(java.awt.event.MouseEvent evt) {
-                jLabel2MousePressed(evt);
-            }
-        });
-        p_inicio.add(jLabel2);
-        jLabel2.setBounds(310, 80, 60, 16);
-
         p_principal.add(p_inicio, "inicio");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -266,14 +256,6 @@ public class JogoDasGarrafas extends javax.swing.JFrame {
         pack();
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
-
-    private void jLabel1MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel1MousePressed
-        arrastar(jLabel1, evt);
-    }//GEN-LAST:event_jLabel1MousePressed
-
-    private void jLabel2MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel2MousePressed
-        arrastar(jLabel2, evt);
-    }//GEN-LAST:event_jLabel2MousePressed
 
     public static void main(String args[]) {
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
@@ -306,8 +288,6 @@ public class JogoDasGarrafas extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel2;
     private javax.swing.JPanel p_inicio;
     private javax.swing.JPanel p_principal;
     // End of variables declaration//GEN-END:variables
