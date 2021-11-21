@@ -6,7 +6,7 @@ public class Teste {
        
 //       a = shuffle(a);
        
-        System.out.println(intDouble_2(b));
+        //System.out.println(intDouble_2(b));
        
 //       for(int i = 0; i < a.length; i++) {
 //           System.out.println(a[i]);

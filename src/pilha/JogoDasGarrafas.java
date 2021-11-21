@@ -1,6 +1,5 @@
 package pilha;
 
-import estruturadedados.No;
 import java.awt.CardLayout;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -8,11 +7,15 @@ import java.awt.Image;
 import java.awt.MouseInfo;
 import java.awt.event.ActionEvent;
 import java.awt.image.BufferedImage;
-import java.io.File;
+import java.io.BufferedInputStream;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Scanner;
 import javax.imageio.ImageIO;
-import javax.swing.BorderFactory;
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Clip;
+import javax.sound.sampled.FloatControl;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.Timer;
@@ -22,33 +25,42 @@ public class JogoDasGarrafas extends javax.swing.JFrame {
     // variáveis de configuração
     final double PERCENT = 10;
     final int BORDA = 5; // até quantos pixels da borda o label pode ir
-    final int TAM = 4; // quantidade de garrafas na versão de output
     final int OX = 12; // (O)ffset (X) do mouse que o label fica quando clicado
     final int OY = -11; // (O)ffset (Y) do mouse que o label fica quando clicado
     final static int DIMENSAO = 50; // vai servir pro tamanho das coisas
+    int tam = 4;
 
     // outras variáveis
-    private static int x, y; // guardam a posição padrão do label arrastado
     PilhaJogo arrastado = new PilhaJogo(); // guarda o label que vai ser arrastado
-    PilhaJogo[] garrafas = new PilhaJogo[TAM];
+    PilhaJogo[] garrafas;
     Scanner scan = new Scanner(System.in); // tu sabe
-    Timer arrastar; // atualiza a posição de "arrastado" numa taxa constante
+    Timer arrastar, subir, descer, queue; // atualiza a posição de "arrastado" numa taxa constante
+    Color[] cores = new Color[9];
 
     public JogoDasGarrafas() {
         // método gerado automaticamente
         initComponents();
+        for (int i = 0; i < cores.length; i++) {
+            cores[i] = Color.getHSBColor(i * 40f / 360f, 1, 1);
+        }
+        cores = embaralhar(cores);
 
         p_gameplay.addMouseListener(new java.awt.event.MouseAdapter() {
             @Override
             public void mousePressed(java.awt.event.MouseEvent evt) {
-                arrastar(evt);
+                arrastar(evt, false);
             }
         });
-
         // evento que atualiza a 60Hz a posição do objeto arrastado
         // de acordo com a posição do mouse (não sei se esse try e catch ainda
         // são necessários, já devo ter me livrado da causa do problema)
         arrastar = new Timer(1000 / 60, (ActionEvent evt1) -> {
+            if (arrastado.descer != null) {
+                arrastado.descer.stop();
+            }
+            if (arrastado.subir != null) {
+                arrastado.subir.stop();
+            }
             try {
                 arrastado.setBounds(limiteX(), limiteY(), arrastado.getBounds().width, arrastado.getBounds().height);
             } catch (Exception ex) {
@@ -65,7 +77,7 @@ public class JogoDasGarrafas extends javax.swing.JFrame {
     }
 
     // método chamado toda vez que um dos labels é clicado
-    private void arrastar(java.awt.event.MouseEvent evt) {
+    private void arrastar(java.awt.event.MouseEvent evt, boolean lm) {
         PilhaJogo label;
         PilhaJogo pilha = new PilhaJogo();
         NoJogo no;
@@ -73,11 +85,10 @@ public class JogoDasGarrafas extends javax.swing.JFrame {
         if (evt.getButton() == 3) {
             if (arrastar.isRunning()) {
                 arrastar.stop();
-                arrastado.setBounds(x, y, arrastado.getBounds().width,
+                arrastado.setBounds(arrastado.x(), arrastado.y(), arrastado.getBounds().width,
                         arrastado.getBounds().height);
                 arrastado = new PilhaJogo();
             }
-            System.out.println("Cancelado");
             return;
         } else if (evt.getButton() == 2) {
             return;
@@ -101,52 +112,60 @@ public class JogoDasGarrafas extends javax.swing.JFrame {
             // desativado e o label que estava seguindo o mouse volta 
             // à sua posição original
             if (arrastar.isRunning()) {
-                if (label.qnt() == 4) {
-                    return;
-                }
 
-                arrastar.stop();
-                arrastado.setBounds(x, y, arrastado.getBounds().width,
-                        arrastado.getBounds().height);
                 if (arrastado.qnt() == 0) {
+                    arrastar.stop();
+                    arrastado.setBounds(arrastado.x(), arrastado.y(), arrastado.getBounds().width,
+                            arrastado.getBounds().height);
                     arrastado = new PilhaJogo();
                     return;
                 }
 
                 no = arrastado.get();
-                while (true) {
-                    System.out.println("Tirei");
+
+                if (lm) {
                     pilha.empilha(no.getDado());
-                    arrastado.desempilha();
-                    if (no.getProx() == null || !no.getDado().equals(no.getProx().getDado())) {
-                        break;
+                } else {
+                    while (true) {
+                        pilha.empilha(no.getDado());
+                        if (no.getProx() == null || !no.getDado().equals(no.getProx().getDado())) {
+                            break;
+                        }
+                        no = no.getProx();
                     }
-                    no = no.getProx();
+                }
+
+                if (label.qnt() + pilha.qnt() > 4) {
+                    return;
                 }
 
                 for (int i = 0; i < pilha.qnt(); i++) {
-                    System.out.println("Coloquei");
+                    arrastado.desempilha();
                     label.empilha(pilha.get().getDado());
                 }
 
+                arrastar.stop();
+                arrastado.setBounds(arrastado.x(), arrastado.y(), arrastado.getBounds().width,
+                        arrastado.getBounds().height);
                 arrastado = new PilhaJogo();
+
+                if (lm) {
+                    t_codigo.setText(UIToCode());
+                }
 
                 // caso o timer esteja desativado, quer dizer que o jogador clicou no
                 // primeiro label, então o programa salva a posição dele, o define
                 // como o label que vai ser arrastado e inicia o timer
             } else {
-                x = label.getBounds().x;
-                y = label.getBounds().y;
                 arrastado = label;
                 arrastar.start();
-                no = label.get();
             }
         }
     }
 
     private void mensagem(boolean instrucoes) {
         if (instrucoes) {
-            l_descricao.setText("Instruções");
+            l_tituloMSG.setText("Instruções");
             l_texto.setText("<html><p align=\"justify\">Em Water Sort Puzzle você deve organizar a água colorida dentro dos frascos<br><br>"
                     + "- OBJETIVO:<br>Separar as cores para que cada cor fique em um frasco diferente<br><br>"
                     + "- MECÂNICA:<br>Clique com o botão esquerdo do mouse em um frasco para selecioná-lo, ele começará a seguir o seu mouse, clique em outro frasco e a camada superior de líquido do 1º passará para o 2º<br><br>"
@@ -154,35 +173,73 @@ public class JogoDasGarrafas extends javax.swing.JFrame {
                     + "- SOU BURRO, CLIQUEI ERRADO:<br>Se você selecionar um frasco que não queria selecionar, simplesmente clique em qualquer lugar (dentro da janela do jogo) com o botão direito do mouse</p>");
             b_voltar.setBounds(10, 450, 120, 40);
         } else {
-            l_descricao.setText("Conceitos Utilizados");
+            l_tituloMSG.setText("Conceitos Utilizados");
             l_texto.setText("<html><p align=\"justify\">Em nosso jogo utilizamos o conceito de Pilha, no qual aquele que foi adicionado por último é o primeiro a ser retirado, esse conceito também é conhecido como LIFO (Last In, First Out).<br><br>O conceito de pilha é aplicado nos frascos do jogo, somente a camada de cima passa para outro frasco e a camada de cima é a última a ser colocada, e é exatamente assim que uma pilha funciona.<br><br>A única diferença é que no nosso jogo, se os nós do topo forem iguais eles vão juntos para a outra pilha, ou seja, se o líquido de uma certa cor no topo de um frasco ocupar mais de 1 nível, quando ele for passado para outro frasco todos os níveis do líquido serão passados</p>");
             b_voltar.setBounds(370, 450, 120, 40);
         }
         tela("mensagens");
     }
 
-    private void jogo() {
-        for (int i = 0; i < TAM; i++) {
+    private void jogo(boolean lm) {
+        garrafas = new PilhaJogo[tam];
+        if (!lm) {
+            t_codigo.setVisible(false);
+        }
+
+        for (int i = 0; i < tam; i++) {
             garrafas[i] = new PilhaJogo();
+            if (lm) {
+                garrafas[i].addMouseListener(new java.awt.event.MouseAdapter() {
+                    @Override
+                    public void mousePressed(java.awt.event.MouseEvent evt) {
+                        arrastar(evt, true);
+                    }
+                });
+            } else {
+                garrafas[i].addMouseListener(new java.awt.event.MouseAdapter() {
+                    @Override
+                    public void mousePressed(java.awt.event.MouseEvent evt) {
+                        arrastar(evt, false);
+                    }
+                });
+            }
+            p_gameplay.add(garrafas[i]);
+
+            garrafas[i].setBounds(500 / tam * (i + 1) - 500 / (tam * 2) - garrafas[i].getIcon().getIconWidth() / 2, 250 - garrafas[i].getIcon().getIconHeight() / 2, garrafas[i].getPreferredSize().width, garrafas[i].getPreferredSize().height);
+
+            if (lm) {
+                if (i <= (int) s_cores.getValue() - 1) {
+                    for (int j = 0; j < 4; j++) {
+                        garrafas[i].empilha(cores[i]);
+                    }
+                }
+            } else {
+                garrafas[i].empilha(Color.green);
+                garrafas[i].empilha(Color.red);
+            }
+
             garrafas[i].addMouseListener(new java.awt.event.MouseAdapter() {
                 @Override
-                public void mousePressed(java.awt.event.MouseEvent evt) {
-                    arrastar(evt);
+                public void mouseEntered(java.awt.event.MouseEvent evt) {
+                    ((PilhaJogo) evt.getSource()).entrou(evt);
                 }
             });
-            p_gameplay.add(garrafas[i]);
-            garrafas[i].setBounds(500 / TAM * (i + 1) - 500 / (TAM * 2) - garrafas[i].getIcon().getIconWidth() / 2, 250 - garrafas[i].getIcon().getIconHeight() / 2, garrafas[i].getPreferredSize().width, garrafas[i].getPreferredSize().height);
-            garrafas[i].empilha(Color.green);
-            garrafas[i].empilha(Color.red);
+            garrafas[i].addMouseListener(new java.awt.event.MouseAdapter() {
+                @Override
+                public void mouseExited(java.awt.event.MouseEvent evt) {
+                    ((PilhaJogo) evt.getSource()).saiu(evt);
+                }
+            });
+            garrafas[i].lockPos(garrafas[i].getLocation().x, garrafas[i].getLocation().y);
         }
         tela("gameplay");
     }
 
-    private void tela(String nome) {
+    public void tela(String nome) {
         CardLayout cl = (CardLayout) p_principal.getLayout();
         cl.show(p_principal, nome);
     }
-    
+
     // define a posição horizontal mínima e máxima que o label pode ser
     // arrastado, os cálculos levam em consideração a posição do mouse na
     // tela e a posição da janela do jogo, assim como os offsets e
@@ -219,7 +276,7 @@ public class JogoDasGarrafas extends javax.swing.JFrame {
         BufferedImage conv;
 
         try {
-            buff = ImageIO.read(new File("src/pilha/imagens/" + nome + ".png"));
+            buff = ImageIO.read((JogoDasGarrafas.class).getResource("/pilha/imagens/" + nome + ".png"));
         } catch (IOException ex) {
             System.out.println("Arquivo não encontrado");
             return null;
@@ -258,6 +315,98 @@ public class JogoDasGarrafas extends javax.swing.JFrame {
         return imagem(dimensao, label, nome, null);
     }
 
+    private String UIToCode() {
+        String[] codigo = new String[garrafas.length];
+        String caracteres = "abcdefghijklmnopqrstuvwxy";
+        String[] aux = new String[2];
+        NoJogo atual;
+
+        for (int i = 0; i < garrafas.length; i++) {
+            codigo[i] = "";
+            atual = garrafas[i].get();
+            if (garrafas[i].qnt() == 0) {
+                codigo[i] += "0";
+            }
+            for (int j = 0; j < garrafas[i].qnt(); j++) {
+                codigo[i] += (Arrays.asList(cores).indexOf(atual.getDado()) + 1);
+                if (atual.getProx() != null) {
+                    atual = atual.getProx();
+                }
+            }
+            codigo[i] = String.format("%04d", Integer.parseInt(new StringBuilder(codigo[i]).toString()));
+            System.out.println("codigo base 5: " + codigo[i]);
+
+            aux[0] = "" + caracteres.charAt(converter("" + codigo[i].charAt(0) + codigo[i].charAt(1), 5));
+            aux[1] = "" + caracteres.charAt(converter("" + codigo[i].charAt(2) + codigo[i].charAt(3), 5));
+
+            codigo[i] = String.join("", aux);
+        }
+        return String.join("", codigo);
+    }
+
+    private int converter(String num, int base) {
+        int soma = 0;
+        String conv = String.valueOf(num);
+        for (int i = 0; i < conv.length(); i++) {
+            soma += Integer.parseInt("" + conv.charAt(conv.length() - 1 - i)) * Math.pow(base, i);
+        }
+        System.out.println(soma);
+        return soma;
+    }
+
+    private static Color[] embaralhar(Color[] vet) {
+        Color[] sort = vet;
+        Color[] aux;
+        Color[] fim = new Color[vet.length];
+        int pos;
+
+        for (int i = 0; i < vet.length - 1; i++) {
+            pos = (int) (Math.random() * sort.length);
+            fim[i] = sort[pos];
+            aux = new Color[sort.length - 1];
+            for (int j = 0; j <= aux.length; j++) {
+                if (j == pos) {
+                    continue;
+                }
+                if (j > pos) {
+                    aux[j - 1] = sort[j];
+                } else {
+                    aux[j] = sort[j];
+                }
+            }
+            sort = aux;
+        }
+        fim[fim.length - 1] = sort[0];
+
+        return fim;
+    }
+    
+    private void tocarSom(String nome, boolean loop, float volume) {
+
+        try {
+            AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(new BufferedInputStream(getClass().getResourceAsStream("/lista/audio/" + nome + ".wav")));
+            Clip clip = AudioSystem.getClip();
+            clip.open(audioInputStream);
+            clip.start();
+            FloatControl gainControl = (FloatControl) clip.getControl(FloatControl.Type.MASTER_GAIN);
+            gainControl.setValue(20f * (float) Math.log10(volume));
+            if (loop) {
+                clip.loop(Clip.LOOP_CONTINUOUSLY);
+            }
+        } catch (Exception ex) {
+            System.out.println("Erro");
+            ex.printStackTrace();
+        }
+    }
+
+    private void tocarSom(String nome) {
+        tocarSom(nome, false, 0.05f);
+    }
+
+    private void tocarSom(String nome, float volume) {
+        tocarSom(nome, false, volume);
+    }
+
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -269,11 +418,22 @@ public class JogoDasGarrafas extends javax.swing.JFrame {
         b_conceitos = new javax.swing.JButton();
         b_jogar = new javax.swing.JButton();
         b_instrucoes = new javax.swing.JButton();
+        b_criacao = new javax.swing.JButton();
         p_mensagens = new javax.swing.JPanel();
-        l_descricao = new javax.swing.JLabel();
+        l_tituloMSG = new javax.swing.JLabel();
         l_texto = new javax.swing.JLabel();
         b_voltar = new javax.swing.JButton();
         p_gameplay = new javax.swing.JPanel();
+        t_codigo = new javax.swing.JTextField();
+        p_tituloLM = new javax.swing.JPanel();
+        l_tituloLM = new javax.swing.JLabel();
+        s_frascos = new javax.swing.JSpinner();
+        b_iniciar = new javax.swing.JButton();
+        l_descricao = new javax.swing.JLabel();
+        l_frascos = new javax.swing.JLabel();
+        l_cores = new javax.swing.JLabel();
+        s_cores = new javax.swing.JSpinner();
+        b_voltarLM = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setMinimumSize(new java.awt.Dimension(500, 500));
@@ -288,7 +448,7 @@ public class JogoDasGarrafas extends javax.swing.JFrame {
         l_titulo.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         l_titulo.setText("Water Sort Puzzle");
         p_titulo.add(l_titulo);
-        l_titulo.setBounds(0, 50, 500, 60);
+        l_titulo.setBounds(0, 30, 500, 80);
 
         l_autores.setFont(new java.awt.Font("High Tower Text", 0, 18)); // NOI18N
         l_autores.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
@@ -331,16 +491,28 @@ public class JogoDasGarrafas extends javax.swing.JFrame {
         p_titulo.add(b_instrucoes);
         b_instrucoes.setBounds(10, 450, 120, 40);
 
+        b_criacao.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        b_criacao.setText("CRIAR");
+        b_criacao.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        b_criacao.setFocusable(false);
+        b_criacao.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                b_criacaoActionPerformed(evt);
+            }
+        });
+        p_titulo.add(b_criacao);
+        b_criacao.setBounds(190, 450, 120, 40);
+
         p_principal.add(p_titulo, "titulo");
 
         p_mensagens.setMinimumSize(new java.awt.Dimension(500, 500));
         p_mensagens.setLayout(null);
 
-        l_descricao.setFont(new java.awt.Font("Segoe UI", 0, 36)); // NOI18N
-        l_descricao.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        l_descricao.setText("Título");
-        p_mensagens.add(l_descricao);
-        l_descricao.setBounds(0, 20, 500, 48);
+        l_tituloMSG.setFont(new java.awt.Font("Segoe UI", 0, 36)); // NOI18N
+        l_tituloMSG.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        l_tituloMSG.setText("Título");
+        p_mensagens.add(l_tituloMSG);
+        l_tituloMSG.setBounds(0, 20, 500, 48);
 
         l_texto.setFont(new java.awt.Font("Segoe UI", 0, 13)); // NOI18N
         l_texto.setText("<html>placeholder placeholder placeholder placeholder<br>placeholder placeholder");
@@ -364,7 +536,75 @@ public class JogoDasGarrafas extends javax.swing.JFrame {
 
         p_gameplay.setMinimumSize(new java.awt.Dimension(500, 500));
         p_gameplay.setLayout(null);
+
+        t_codigo.setEditable(false);
+        t_codigo.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        t_codigo.setFocusable(false);
+        p_gameplay.add(t_codigo);
+        t_codigo.setBounds(0, 10, 500, 30);
+
         p_principal.add(p_gameplay, "gameplay");
+
+        p_tituloLM.setLayout(null);
+
+        l_tituloLM.setFont(new java.awt.Font("Monotype Corsiva", 1, 65)); // NOI18N
+        l_tituloLM.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        l_tituloLM.setText("<html><p align=\"center\">Water Sort Puzzle<br>Level Maker</p>");
+        p_tituloLM.add(l_tituloLM);
+        l_tituloLM.setBounds(0, 30, 500, 150);
+
+        s_frascos.setModel(new javax.swing.SpinnerNumberModel(3, 3, 10, 1));
+        s_frascos.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                s_frascosStateChanged(evt);
+            }
+        });
+        p_tituloLM.add(s_frascos);
+        s_frascos.setBounds(85, 330, 80, 25);
+
+        b_iniciar.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
+        b_iniciar.setText("Iniciar");
+        b_iniciar.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        b_iniciar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                b_iniciarActionPerformed(evt);
+            }
+        });
+        p_tituloLM.add(b_iniciar);
+        b_iniciar.setBounds(190, 380, 120, 40);
+
+        l_descricao.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        l_descricao.setText("<html><p align=\"center\">Bem vindo ao criador de níveis do jogo!<br><br>Para iniciar basta escolher a quantidade de frascos, a quantidade de cores diferentes e clicar no botão <b>Iniciar</b></p>");
+        p_tituloLM.add(l_descricao);
+        l_descricao.setBounds(30, 190, 440, 60);
+
+        l_frascos.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        l_frascos.setText("Qnt. Frascos");
+        p_tituloLM.add(l_frascos);
+        l_frascos.setBounds(85, 310, 80, 16);
+
+        l_cores.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        l_cores.setText("Qnt. Cores");
+        p_tituloLM.add(l_cores);
+        l_cores.setBounds(335, 310, 80, 16);
+
+        s_cores.setModel(new javax.swing.SpinnerNumberModel(2, 2, 2, 1));
+        p_tituloLM.add(s_cores);
+        s_cores.setBounds(335, 330, 80, 25);
+
+        b_voltarLM.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        b_voltarLM.setText("VOLTAR");
+        b_voltarLM.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        b_voltarLM.setFocusable(false);
+        b_voltarLM.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                b_voltarLMActionPerformed(evt);
+            }
+        });
+        p_tituloLM.add(b_voltarLM);
+        b_voltarLM.setBounds(190, 450, 120, 40);
+
+        p_principal.add(p_tituloLM, "tituloLM");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -394,8 +634,25 @@ public class JogoDasGarrafas extends javax.swing.JFrame {
     }//GEN-LAST:event_b_conceitosActionPerformed
 
     private void b_jogarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_b_jogarActionPerformed
-        jogo();
+        jogo(false);
     }//GEN-LAST:event_b_jogarActionPerformed
+
+    private void b_iniciarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_b_iniciarActionPerformed
+        tam = (int) s_frascos.getValue();
+        jogo(true);
+    }//GEN-LAST:event_b_iniciarActionPerformed
+
+    private void b_criacaoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_b_criacaoActionPerformed
+        tela("tituloLM");
+    }//GEN-LAST:event_b_criacaoActionPerformed
+
+    private void b_voltarLMActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_b_voltarLMActionPerformed
+        tela("titulo");
+    }//GEN-LAST:event_b_voltarLMActionPerformed
+
+    private void s_frascosStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_s_frascosStateChanged
+        s_cores.setModel(new javax.swing.SpinnerNumberModel((int) s_frascos.getValue() == (int) s_cores.getValue() ? (int) s_cores.getValue() - 1 : (int) s_cores.getValue(), 2, (int) s_frascos.getValue() > 4 ? 4 : (int) s_frascos.getValue() - 1, 1));
+    }//GEN-LAST:event_s_frascosStateChanged
 
     public static void main(String args[]) {
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
@@ -407,16 +664,24 @@ public class JogoDasGarrafas extends javax.swing.JFrame {
                 if ("Nimbus".equals(info.getName())) {
                     javax.swing.UIManager.setLookAndFeel(info.getClassName());
                     break;
+
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(JogoDasGarrafas.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(JogoDasGarrafas.class
+                    .getName()).log(java.util.logging.Level.SEVERE, null, ex);
+
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(JogoDasGarrafas.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(JogoDasGarrafas.class
+                    .getName()).log(java.util.logging.Level.SEVERE, null, ex);
+
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(JogoDasGarrafas.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(JogoDasGarrafas.class
+                    .getName()).log(java.util.logging.Level.SEVERE, null, ex);
+
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(JogoDasGarrafas.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(JogoDasGarrafas.class
+                    .getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
 
@@ -429,16 +694,27 @@ public class JogoDasGarrafas extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton b_conceitos;
+    private javax.swing.JButton b_criacao;
+    private javax.swing.JButton b_iniciar;
     private javax.swing.JButton b_instrucoes;
     private javax.swing.JButton b_jogar;
     private javax.swing.JButton b_voltar;
+    private javax.swing.JButton b_voltarLM;
     private javax.swing.JLabel l_autores;
+    private javax.swing.JLabel l_cores;
     private javax.swing.JLabel l_descricao;
+    private javax.swing.JLabel l_frascos;
     private javax.swing.JLabel l_texto;
     private javax.swing.JLabel l_titulo;
+    private javax.swing.JLabel l_tituloLM;
+    private javax.swing.JLabel l_tituloMSG;
     private javax.swing.JPanel p_gameplay;
     private javax.swing.JPanel p_mensagens;
     private javax.swing.JPanel p_principal;
     private javax.swing.JPanel p_titulo;
+    private javax.swing.JPanel p_tituloLM;
+    private javax.swing.JSpinner s_cores;
+    private javax.swing.JSpinner s_frascos;
+    private javax.swing.JTextField t_codigo;
     // End of variables declaration//GEN-END:variables
 }
