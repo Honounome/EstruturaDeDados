@@ -1,8 +1,13 @@
+
+import java.util.Arrays;
+
 public class Teste {
 
     public static void main(String args[]) {
-       int[] a = {1, 2, 3, 4, 5};
-       int b = 3;
+        int[] a = {1, 2, 3, 4, 5};
+        int b = 3;
+        
+        System.out.println(Arrays.toString("wefq".split(",")));
        
 //       a = shuffle(a);
        

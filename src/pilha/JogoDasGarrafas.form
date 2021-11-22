@@ -114,6 +114,7 @@
                 <Property name="cursor" type="java.awt.Cursor" editor="org.netbeans.modules.form.editors2.CursorEditor">
                   <Color id="Hand Cursor"/>
                 </Property>
+                <Property name="focusable" type="boolean" value="false"/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="b_jogarActionPerformed"/>
@@ -161,6 +162,48 @@
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
                   <AbsoluteConstraints x="190" y="450" width="120" height="40"/>
+                </Constraint>
+              </Constraints>
+            </Component>
+            <Component class="javax.swing.JLabel" name="l_insira">
+              <Properties>
+                <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+                  <Color blue="c0" green="c0" id="lightGray" palette="1" red="c0" type="palette"/>
+                </Property>
+                <Property name="horizontalAlignment" type="int" value="0"/>
+                <Property name="text" type="java.lang.String" value="Insira um c&#xf3;digo"/>
+                <Property name="cursor" type="java.awt.Cursor" editor="org.netbeans.modules.form.editors2.CursorEditor">
+                  <Color id="Text Cursor"/>
+                </Property>
+                <Property name="focusable" type="boolean" value="false"/>
+              </Properties>
+              <Constraints>
+                <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
+                  <AbsoluteConstraints x="0" y="250" width="500" height="20"/>
+                </Constraint>
+              </Constraints>
+            </Component>
+            <Component class="javax.swing.JTextField" name="t_entrada">
+              <Properties>
+                <Property name="horizontalAlignment" type="int" value="0"/>
+              </Properties>
+              <Events>
+                <EventHandler event="keyTyped" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="t_entradaKeyTyped"/>
+              </Events>
+              <Constraints>
+                <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
+                  <AbsoluteConstraints x="0" y="245" width="500" height="30"/>
+                </Constraint>
+              </Constraints>
+            </Component>
+            <Component class="javax.swing.JLabel" name="l_instrucoes">
+              <Properties>
+                <Property name="horizontalAlignment" type="int" value="0"/>
+                <Property name="text" type="java.lang.String" value="&lt;html&gt;&lt;p align=&quot;center&quot;&gt;No campo abaixo voc&#xea; pode inserir um c&#xf3;digo de fase.&lt;br&gt;Voc&#xea; tamb&#xe9;m pode deix&#xe1;-lo em branco e jogar 10 fases que n&#xf3;s fizemos&lt;/p&gt;"/>
+              </Properties>
+              <Constraints>
+                <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
+                  <AbsoluteConstraints x="0" y="200" width="500" height="40"/>
                 </Constraint>
               </Constraints>
             </Component>
@@ -251,12 +294,25 @@
             <Component class="javax.swing.JTextField" name="t_codigo">
               <Properties>
                 <Property name="editable" type="boolean" value="false"/>
+                <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+                  <Color blue="df" green="d9" red="d6" type="rgb"/>
+                </Property>
                 <Property name="horizontalAlignment" type="int" value="0"/>
-                <Property name="focusable" type="boolean" value="false"/>
               </Properties>
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                  <AbsoluteConstraints x="0" y="10" width="500" height="30"/>
+                  <AbsoluteConstraints x="0" y="30" width="500" height="30"/>
+                </Constraint>
+              </Constraints>
+            </Component>
+            <Component class="javax.swing.JLabel" name="l_codigo">
+              <Properties>
+                <Property name="horizontalAlignment" type="int" value="0"/>
+                <Property name="text" type="java.lang.String" value="C&#xf3;digo gerado:"/>
+              </Properties>
+              <Constraints>
+                <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
+                  <AbsoluteConstraints x="0" y="10" width="500" height="20"/>
                 </Constraint>
               </Constraints>
             </Component>
