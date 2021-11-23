@@ -136,6 +136,7 @@ public class PilhaJogo extends JLabel {
         for (int i = 0; i < qnt; i++) {
             if(aux.getProx() != null && !(aux.getDado().equals(aux.getProx().getDado())))
                 return false;
+            aux = aux.getProx();
         }
         return true;
     }

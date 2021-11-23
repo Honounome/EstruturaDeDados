@@ -3,49 +3,56 @@ package fila;
 import estruturadedados.No;
 
 public class FilaExemplo {
-    
+
     private No primeiro;
     private No ultimo;
     private String nomeDaFila;
-    
-    public FilaExemplo(){
-        this.nomeDaFila = "Fila Teste!";
-        this.primeiro = null;
-        this.ultimo = null;
+
+    public FilaExemplo() {
+        nomeDaFila = "Fila Teste!";
+        primeiro = ultimo = null;
+    }
+
+    public FilaExemplo(String nomeDaFilaNovo) {
+        nomeDaFila = nomeDaFilaNovo;
+        primeiro = ultimo = null;
     }
     
-    public FilaExemplo(String nomeDaFilaNovo){
-        this.nomeDaFila = nomeDaFilaNovo;
-        this.primeiro = null;
-        this.ultimo = null;
+    public No get() {
+        return primeiro;
     }
-    
-    public boolean vazio(){
-        return this.primeiro == null;
+
+    public boolean vazio() {
+        return primeiro == null;
     }
-    
-    public void enfileira(String item){
-        if(vazio()){
-            this.primeiro = new No(item);
-            this.ultimo = new No(item);
-        }else{
-            this.ultimo.setProx(new No(item));
-            this.ultimo.getProx();
+
+    public void enfileira(String item) {
+        if (vazio()) {
+            primeiro = ultimo = new No(item);
+        } else {
+            ultimo.setProx(new No(item));
+            ultimo = ultimo.getProx();
         }
     }
-    
-    public String desenfileira(){
-        if(vazio()){
+
+    public String desenfileira() {
+        if (vazio()) {
             return null;
-        }else{
-            String item = this.primeiro.getDado();
-            if(this.primeiro == this.ultimo){
-                this.primeiro = null;
-                this.ultimo = null;
-            }else{
-                this.primeiro = this.primeiro.getProx();
+        } else {
+            String item = primeiro.getDado();
+            if (primeiro == ultimo) {
+                primeiro = null;
+                ultimo = null;
+            } else {
+                primeiro = primeiro.getProx();
             }
             return item;
+        }
+    }
+
+    public void toList(String[] vet) {
+        for (int i = 0; i < vet.length; i++){
+            enfileira(vet[i]);
         }
     }
 }
