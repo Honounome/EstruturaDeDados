@@ -1,6 +1,7 @@
 package fila;
 
 import estruturadedados.No;
+import java.util.Arrays;
 
 public class FilaExemplo {
 
@@ -41,8 +42,7 @@ public class FilaExemplo {
         } else {
             String item = primeiro.getDado();
             if (primeiro == ultimo) {
-                primeiro = null;
-                ultimo = null;
+                primeiro = ultimo = null;
             } else {
                 primeiro = primeiro.getProx();
             }
@@ -50,9 +50,10 @@ public class FilaExemplo {
         }
     }
 
-    public void toList(String[] vet) {
+    public void praFila(String[] vet) {
         for (int i = 0; i < vet.length; i++){
             enfileira(vet[i]);
         }
+        System.out.println(Arrays.toString(vet));
     }
 }

@@ -1,5 +1,12 @@
 
+import java.io.BufferedInputStream;
 import java.util.Arrays;
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Clip;
+import javax.sound.sampled.FloatControl;
+import javax.sound.sampled.LineEvent;
+import javax.sound.sampled.LineListener;
 
 public class Teste {
 
@@ -7,7 +14,7 @@ public class Teste {
         int[] a = {1, 2, 3, 4, 5};
         int b = 3;
         
-        System.out.println(Arrays.toString("wefq".split(",")));
+        tocarSom("agua0", false, 1f);
        
 //       a = shuffle(a);
        
@@ -16,6 +23,33 @@ public class Teste {
 //       for(int i = 0; i < a.length; i++) {
 //           System.out.println(a[i]);
 //       }
+    }
+    
+    private static void tocarSom(String nome, boolean loop, float volume) {
+
+        try {
+            AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(new BufferedInputStream(Teste.class.getResourceAsStream("/pilha/midia/" + nome + ".wav")));
+            Clip clip = AudioSystem.getClip();
+            clip.open(audioInputStream);
+            clip.start();
+            FloatControl gainControl = (FloatControl) clip.getControl(FloatControl.Type.MASTER_GAIN);
+            gainControl.setValue(20f * (float) Math.log10(volume));
+            if (loop) {
+                clip.loop(Clip.LOOP_CONTINUOUSLY);
+            }
+            clip.addLineListener(new LineListener() {
+
+                    @Override
+                    public void update(final LineEvent event) {
+                        if (event.getType().equals(javax.sound.sampled.LineEvent.Type.STOP)) {
+                            System.out.println("Do something");
+                        }
+                    }
+                });
+        } catch (Exception ex) {
+            System.out.println("Erro");
+            ex.printStackTrace();
+        }
     }
     
     private static int[] shuffle(int[] vet) {

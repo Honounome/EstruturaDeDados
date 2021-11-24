@@ -28,14 +28,16 @@ public class PilhaExemplo {
         tam++;
     }
     
-    public void desempilha() {
+    public String desempilha() {
         if(vazia())
-            return;
+            return null;
+        String item = topo.getDado();
         if(base == topo)
             base = topo = null;
         else
             topo = topo.getProx();
         tam--;
+        return item;
     }
     
     public boolean vazia(){

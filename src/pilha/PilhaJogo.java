@@ -130,12 +130,16 @@ public class PilhaJogo extends JLabel {
         });
         descer.start();
     }
-    
+
     public boolean homo() {
         NoJogo aux = get();
         for (int i = 0; i < qnt; i++) {
-            if(aux.getProx() != null && !(aux.getDado().equals(aux.getProx().getDado())))
+            if (qnt() < 4) {
                 return false;
+            }
+            if (aux.getProx() != null && !(aux.getDado().equals(aux.getProx().getDado()))) {
+                return false;
+            }
             aux = aux.getProx();
         }
         return true;
