@@ -37,7 +37,7 @@ public class JogoDasGarrafas1 extends javax.swing.JFrame {
     final int OY = -11; // (O)ffset (Y) do mouse que o label fica quando clicado
     final static int DIMENSAO = 40; // vai servir pro tamanho das coisas
     int tam = 4;
-
+    
     int chances;
     String caracteres = "0123456789abcçdefghijklmnopqrstuvwxyzáâàãéêèíîìóôòõúûùABCÇDEFGHIJKLMNOPQRSTUVWXYZÁÂÀÃÉÊÈÍÎÌÓÔÒÕÚÛÙ .";
 
@@ -47,12 +47,13 @@ public class JogoDasGarrafas1 extends javax.swing.JFrame {
     Timer arrastar, vencer;
     Color[] cores = new Color[9];
     FilaExemplo codigo;
-    PilhaExemplo anteriores;
+    PilhaExemplo[] anteriores;
     JSpinner[] spinners;
-
+    
     public JogoDasGarrafas1() {
         // método gerado automaticamente
         initComponents();
+        anteriores = new PilhaExemplo[]{new PilhaExemplo(), new PilhaExemplo(), new PilhaExemplo()};
         spinners = new JSpinner[]{s_vermelho, s_laranja, s_verdeC, s_verde, s_verzul, s_azul, s_azulE, s_roxo, s_rosa, s_vazios};
         t_codigo.setBorder(null);
         t_codigo.setOpaque(false);
@@ -67,7 +68,7 @@ public class JogoDasGarrafas1 extends javax.swing.JFrame {
                 arrastar(evt, false);
             }
         });
-
+        
         t_entrada.addKeyListener(new KeyAdapter() {
             @Override
             public void keyPressed(KeyEvent evt) {
@@ -78,19 +79,19 @@ public class JogoDasGarrafas1 extends javax.swing.JFrame {
                 }
             }
         });
-
+        
         t_entrada.getDocument().addDocumentListener(new DocumentListener() {
             @Override
             public void changedUpdate(DocumentEvent e) {
             }
-
+            
             @Override
             public void removeUpdate(DocumentEvent e) {
                 if (t_entrada.getText().length() == 0) {
                     l_insira.setText("Insira um código");
                 }
             }
-
+            
             @Override
             public void insertUpdate(DocumentEvent e) {
                 l_insira.setText("");
@@ -114,7 +115,7 @@ public class JogoDasGarrafas1 extends javax.swing.JFrame {
                 arrastar.restart();
             }
         });
-
+        
         vencer = new Timer(1000, (ActionEvent evt) -> {
             if (codigo.vazio()) {
                 reset();
@@ -125,31 +126,7 @@ public class JogoDasGarrafas1 extends javax.swing.JFrame {
             vencer.stop();
         });
     }
-
-    boolean pode(PilhaJogo fonte, PilhaJogo destino, PilhaJogo pilha) {
-        PilhaJogo empilha = new PilhaJogo();
-        NoJogo atual;
-
-        if (fonte.qnt() == 0) {
-            return false;
-        }
-
-        atual = fonte.get();
-        while (true) {
-            empilha.empilha(atual.getDado());
-            if (atual.getProx() == null || !atual.getDado().equals(atual.getProx().getDado())) {
-                break;
-            }
-            atual = atual.getProx();
-        }
-        System.out.println(empilha.qnt());
-        
-        if (pilha.qnt() != empilha.qnt())
-            return false;
-
-        return destino.qnt() + empilha.qnt() <= 4;
-    }
-
+    
     private void reset() {
         for (Component c : p_gameplay.getComponents()) {
             if (c instanceof PilhaJogo) {
@@ -167,9 +144,8 @@ public class JogoDasGarrafas1 extends javax.swing.JFrame {
     private void arrastar(java.awt.event.MouseEvent evt, boolean lm) {
         PilhaJogo label;
         PilhaJogo pilha = new PilhaJogo();
-        PilhaJogo pilha2 = new PilhaJogo();
         NoJogo no;
-
+        
         if (evt.getButton() == 3) {
             if (arrastar.isRunning()) {
                 arrastar.stop();
@@ -181,7 +157,7 @@ public class JogoDasGarrafas1 extends javax.swing.JFrame {
         } else if (evt.getButton() == 2) {
             return;
         }
-
+        
         try {
             label = (PilhaJogo) evt.getSource();
         } catch (ClassCastException ex) {
@@ -193,14 +169,14 @@ public class JogoDasGarrafas1 extends javax.swing.JFrame {
         if (arrastado.equals(label)) {
             return;
         }
-
+        
         if (evt.getButton() == 1) {
             // se o timer estiver ativo, quer dizer que o jogador já clicou em
             // um label e está clicando no segundo agora, então o timer é 
             // desativado e o label que estava seguindo o mouse volta 
             // à sua posição original
             if (arrastar.isRunning()) {
-
+                
                 if (arrastado.qnt() == 0) {
                     arrastar.stop();
                     arrastado.setBounds(arrastado.x(), arrastado.y(), arrastado.getBounds().width,
@@ -208,21 +184,13 @@ public class JogoDasGarrafas1 extends javax.swing.JFrame {
                     arrastado = new PilhaJogo();
                     return;
                 }
-
+                
                 no = arrastado.get();
-
+                
                 if (lm) {
                     pilha.empilha(no.getDado());
-                    while (true) {
-                        pilha2.empilha(no.getDado());
-                        if (no.getProx() == null || !no.getDado().equals(no.getProx().getDado())) {
-                            break;
-                        }
-                        no = no.getProx();
-                    }
                 } else {
                     while (true) {
-                        pilha2.empilha(no.getDado());
                         pilha.empilha(no.getDado());
                         if (no.getProx() == null || !no.getDado().equals(no.getProx().getDado())) {
                             break;
@@ -230,41 +198,37 @@ public class JogoDasGarrafas1 extends javax.swing.JFrame {
                         no = no.getProx();
                     }
                 }
-
+                
                 if (label.qnt() + pilha.qnt() > 4) {
                     return;
                 }
-
+                
+                if (label.get() != null &&anteriores[0].get() != null && lm && arrastado.get().getDado().equals(label.get().getDado()) && !(anteriores[1].get().getDado().equals(String.valueOf(java.util.Arrays.asList(garrafas).indexOf(arrastado))) && anteriores[2].get().getDado().equals(String.valueOf(java.util.Arrays.asList(garrafas).indexOf(label))))) {
+                    return;
+                }
+                
                 tocarSom("2agua" + label.qnt() + (label.qnt() + pilha.qnt()));
-
-                anteriores.empilha(UIToCode());
-                System.out.println("Tamanho: " + pilha2.qnt());
-
+                
+                anteriores[0].empilha(UIToCode());
+                anteriores[1].empilha(String.valueOf(java.util.Arrays.asList(garrafas).indexOf(arrastado)));
+                anteriores[2].empilha(String.valueOf(java.util.Arrays.asList(garrafas).indexOf(label)));
+                
                 for (int i = 0; i < pilha.qnt(); i++) {
                     arrastado.desempilha();
                     label.empilha(pilha.get().getDado());
                 }
-
-                if (lm && !pode(label, arrastado, pilha2)) {
-                    anteriores.desempilha();
-                    for (int i = 0; i < pilha.qnt(); i++) {
-                        label.desempilha();
-                        arrastado.empilha(pilha.get().getDado());
-                    }
-                    return;
-                }
-
+                
                 arrastar.stop();
                 arrastado.setBounds(arrastado.x(), arrastado.y(), arrastado.getBounds().width,
                         arrastado.getBounds().height);
                 arrastado = new PilhaJogo();
-
+                
                 if (lm) {
                     t_codigo.setText(UIToCode());
                 }
-
+                
                 if (!lm) {
-
+                    
                     if (check()) {
                         if (codigo.vazio()) {
                             tocarSom("vitoria");
@@ -280,7 +244,7 @@ public class JogoDasGarrafas1 extends javax.swing.JFrame {
             }
         }
     }
-
+    
     private boolean check() {
         for (PilhaJogo garrafa : garrafas) {
             if (!garrafa.homo()) {
@@ -289,7 +253,7 @@ public class JogoDasGarrafas1 extends javax.swing.JFrame {
         }
         return true;
     }
-
+    
     private void mensagem(boolean instrucoes) {
         if (instrucoes) {
             l_tituloMSG.setText("Instruções");
@@ -309,7 +273,7 @@ public class JogoDasGarrafas1 extends javax.swing.JFrame {
         }
         tela("mensagens");
     }
-
+    
     private void posicionamento(PilhaJogo[] garrafas, int i) {
         int qtd = garrafas.length;
         int max = 5;
@@ -329,7 +293,7 @@ public class JogoDasGarrafas1 extends javax.swing.JFrame {
             garrafas[i].setBounds(500 / qtd * (i + 1) - 500 / (qtd * 2) - garrafas[i].getIcon().getIconWidth() / 2, 250 - garrafas[i].getIcon().getIconHeight() / 2, garrafas[i].getPreferredSize().width, garrafas[i].getPreferredSize().height);
         }
     }
-
+    
     private void codeToUI(String fase, boolean lm) {
         String composicao;
         garrafas = new PilhaJogo[fase.length() / 2];
@@ -348,7 +312,6 @@ public class JogoDasGarrafas1 extends javax.swing.JFrame {
                 String carac = "" + caracteres.indexOf(fase.charAt(i * 2 + j));
                 composicao += (carac.length() == 1 ? "0" + carac : carac);
             }
-            System.out.println(composicao);
             for (int j = 0; j < 4; j++) {
                 if (composicao.charAt(j) == '0') {
                     continue;
@@ -359,11 +322,11 @@ public class JogoDasGarrafas1 extends javax.swing.JFrame {
         }
         tela("gameplay");
     }
-
+    
     private void jogo(boolean lm, String fase) {
         reset();
-
-        anteriores = new PilhaExemplo();
+        
+        anteriores = new PilhaExemplo[]{new PilhaExemplo(), new PilhaExemplo(), new PilhaExemplo()};
         if (lm) {
             l_codigo.setVisible(true);
             t_codigo.setVisible(true);
@@ -399,7 +362,6 @@ public class JogoDasGarrafas1 extends javax.swing.JFrame {
                 codigo.praFila("00lbkk, bmmmçc00, culw00uk, cvkxwé00êd, bwoê00éèûîúm, eAm0w0ìGbAHûzê, a0oazùíêCçKmJc, dúqáynècCFF0VîSk, 00pÇáCéû00IégmóúmJ, cslÙwIìÍíóGeVõú0 tÚX".split(", "));
                 codeToUI(codigo.desenfileira(), false);
             } else {
-                System.out.println("Tô aqui");
                 if (!(t_entrada.getText().matches("[0123456789abcçdefghijklmnopqrstuvwxyzáâàãéêèíîìóôòõúûùABCÇDEFGHIJKLMNOPQRSTUVWXYZÁÂÀÃÉÊÈÍÎÌÓÔÒÕÚÛÙ .,]+") || t_entrada.getText().equals(""))) {
                     return;
                 }
@@ -409,12 +371,11 @@ public class JogoDasGarrafas1 extends javax.swing.JFrame {
                         return;
                     }
                 }
-                System.out.println("Passei da checagem");
                 codeToUI(fase, false);
             }
         }
     }
-
+    
     public void tela(String nome) {
         CardLayout cl = (CardLayout) p_principal.getLayout();
         cl.show(p_principal, nome);
@@ -454,14 +415,14 @@ public class JogoDasGarrafas1 extends javax.swing.JFrame {
         // conveniente para os nossos propósitos
         BufferedImage buff;
         BufferedImage conv;
-
+        
         try {
             buff = ImageIO.read((JogoDasGarrafas1.class).getResource("/pilha/midia/" + nome + ".png"));
         } catch (IOException ex) {
             System.out.println("Arquivo não encontrado");
             return null;
         }
-
+        
         conv = new BufferedImage(buff.getWidth(), buff.getHeight(), BufferedImage.TYPE_4BYTE_ABGR);
         conv.getGraphics().drawImage(buff, 0, 0, null);
 
@@ -485,7 +446,7 @@ public class JogoDasGarrafas1 extends javax.swing.JFrame {
         ImageIcon img = new ImageIcon(conv.getScaledInstance(dimensao, -1, 1));
         label.setPreferredSize(new Dimension(img.getIconWidth(), img.getIconHeight()));
         label.setIcon(img);
-
+        
         return conv.getScaledInstance(dimensao, -1, 1);
     }
 
@@ -494,12 +455,12 @@ public class JogoDasGarrafas1 extends javax.swing.JFrame {
     public static Image imagem(int dimensao, JLabel label, String nome) {
         return imagem(dimensao, label, nome, null);
     }
-
+    
     private String UIToCode() {
         String[] codigo = new String[garrafas.length];
         String[] aux = new String[2];
         NoJogo atual;
-
+        
         for (int i = 0; i < garrafas.length; i++) {
             codigo[i] = "";
             atual = garrafas[i].get();
@@ -513,15 +474,15 @@ public class JogoDasGarrafas1 extends javax.swing.JFrame {
                 }
             }
             codigo[i] = new StringBuilder(String.format("%04d", Integer.parseInt(codigo[i]))).reverse().toString();
-
+            
             aux[0] = "" + caracteres.charAt(converter("" + codigo[i].charAt(0) + codigo[i].charAt(1), (int) Math.sqrt(caracteres.length())));
             aux[1] = "" + caracteres.charAt(converter("" + codigo[i].charAt(2) + codigo[i].charAt(3), (int) Math.sqrt(caracteres.length())));
-
+            
             codigo[i] = String.join("", aux);
         }
         return String.join("", codigo);
     }
-
+    
     private int converter(String num, int base) {
         int soma = 0;
         String conv = String.valueOf(num);
@@ -530,13 +491,13 @@ public class JogoDasGarrafas1 extends javax.swing.JFrame {
         }
         return soma;
     }
-
+    
     private static Color[] embaralhar(Color[] vet) {
         Color[] sort = vet;
         Color[] aux;
         Color[] fim = new Color[vet.length];
         int pos;
-
+        
         for (int i = 0; i < vet.length - 1; i++) {
             pos = (int) (Math.random() * sort.length);
             fim[i] = sort[pos];
@@ -554,12 +515,12 @@ public class JogoDasGarrafas1 extends javax.swing.JFrame {
             sort = aux;
         }
         fim[fim.length - 1] = sort[0];
-
+        
         return fim;
     }
-
+    
     private static void tocarSom(String nome, boolean loop, float volume, Class classe) {
-
+        
         try {
             AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(new BufferedInputStream(classe.getResourceAsStream("/pilha/midia/" + nome + ".wav")));
             Clip clip = AudioSystem.getClip();
@@ -571,11 +532,11 @@ public class JogoDasGarrafas1 extends javax.swing.JFrame {
                 clip.loop(Clip.LOOP_CONTINUOUSLY);
             }
             clip.addLineListener(new LineListener() {
-
+                
                 @Override
                 public void update(final LineEvent event) {
                     if (event.getType().equals(javax.sound.sampled.LineEvent.Type.STOP)) {
-
+                        
                     }
                 }
             });
@@ -584,11 +545,11 @@ public class JogoDasGarrafas1 extends javax.swing.JFrame {
             ex.printStackTrace();
         }
     }
-
+    
     private static void tocarSom(String nome) {
         tocarSom(nome, false, 0.05f, JogoDasGarrafas1.class);
     }
-
+    
     private static void tocarSom(String nome, float volume) {
         tocarSom(nome, false, volume, JogoDasGarrafas1.class);
     }
@@ -1040,17 +1001,21 @@ public class JogoDasGarrafas1 extends javax.swing.JFrame {
     }//GEN-LAST:event_b_voltarLMActionPerformed
 
     private void b_desfazerActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_b_desfazerActionPerformed
-        if (chances > 0 && !anteriores.vazia()) {
+        if (chances > 0 && !anteriores[0].vazia()) {
             chances--;
             reset();
-            codeToUI(anteriores.desempilha(), false);
+            anteriores[1].desempilha();
+            anteriores[2].desempilha();
+            codeToUI(anteriores[0].desempilha(), false);
         }
         if (chances == 0) {
             b_desfazer.setEnabled(false);
         }
-        if (chances < 0 && !anteriores.vazia()) {
+        if (chances < 0 && !anteriores[0].vazia()) {
             reset();
-            codeToUI(anteriores.desempilha(), true);
+            anteriores[1].desempilha();
+            anteriores[2].desempilha();
+            codeToUI(anteriores[0].desempilha(), true);
         }
     }//GEN-LAST:event_b_desfazerActionPerformed
 
@@ -1085,15 +1050,15 @@ public class JogoDasGarrafas1 extends javax.swing.JFrame {
         } catch (ClassNotFoundException ex) {
             java.util.logging.Logger.getLogger(JogoDasGarrafas1.class
                     .getName()).log(java.util.logging.Level.SEVERE, null, ex);
-
+            
         } catch (InstantiationException ex) {
             java.util.logging.Logger.getLogger(JogoDasGarrafas1.class
                     .getName()).log(java.util.logging.Level.SEVERE, null, ex);
-
+            
         } catch (IllegalAccessException ex) {
             java.util.logging.Logger.getLogger(JogoDasGarrafas1.class
                     .getName()).log(java.util.logging.Level.SEVERE, null, ex);
-
+            
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
             java.util.logging.Logger.getLogger(JogoDasGarrafas1.class
                     .getName()).log(java.util.logging.Level.SEVERE, null, ex);
