@@ -62,7 +62,7 @@ public class JogoDasGarrafas1 extends javax.swing.JFrame {
         }
         //cores = embaralhar(cores);
 
-        p_gameplay.addMouseListener(new java.awt.event.MouseAdapter() {
+        lp_gameplay.addMouseListener(new java.awt.event.MouseAdapter() {
             @Override
             public void mousePressed(java.awt.event.MouseEvent evt) {
                 arrastar(evt, false);
@@ -102,6 +102,7 @@ public class JogoDasGarrafas1 extends javax.swing.JFrame {
         // de acordo com a posição do mouse (não sei se esse try e catch ainda
         // são necessários, já devo ter me livrado da causa do problema)
         arrastar = new Timer(1000 / 60, (ActionEvent evt1) -> {
+            lp_gameplay.moveToFront(arrastado);
             if (arrastado.descer != null) {
                 arrastado.descer.stop();
             }
@@ -128,9 +129,9 @@ public class JogoDasGarrafas1 extends javax.swing.JFrame {
     }
     
     private void reset() {
-        for (Component c : p_gameplay.getComponents()) {
+        for (Component c : lp_gameplay.getComponents()) {
             if (c instanceof PilhaJogo) {
-                p_gameplay.remove(c);
+                lp_gameplay.remove(c);
             }
         }
         this.b_desfazer.setEnabled(true);
@@ -254,22 +255,35 @@ public class JogoDasGarrafas1 extends javax.swing.JFrame {
         return true;
     }
     
-    private void mensagem(boolean instrucoes) {
-        if (instrucoes) {
-            l_tituloMSG.setText("Instruções");
-            l_texto.setText("<html><p align=\"justify\">Em Water Sort Puzzle você deve organizar a água colorida dentro dos frascos<br><br>"
-                    + "- OBJETIVO:<br>Separar as cores para que cada cor fique em um frasco diferente<br><br>"
-                    + "- MECÂNICA:<br>Clique com o botão esquerdo do mouse em um frasco para selecioná-lo, ele começará a seguir o seu mouse, clique em outro frasco e a camada superior de líquido do 1º passará para o 2º<br><br>"
-                    + "- LIMITES:<br>Cada frasco suporta no máximo 4 níveis de líquido, pode tentar por mais, só um aviso: você não vai conseguir ;)<br><br>"
-                    + "- SOU BURRO, CLIQUEI ERRADO:<br>Se você selecionar um frasco que não queria selecionar, simplesmente clique em qualquer lugar (dentro da janela do jogo) com o botão direito do mouse.<br><br>"
-                    + "- DESFAZER UM MOVIMENTO<br>Caso você tenha colocado água no frasco errado, pode desfazer o movimento clicando no botão DESFAZER, que pode ser usado 5 vezes.</p>");
-            b_voltar.setBounds(10, 450, 120, 40);
-        } else {
-            l_tituloMSG.setText("Conceitos Utilizados");
-            l_texto.setText("<html><p align=\"justify\">Em nosso jogo utilizamos o conceito de Pilha, no qual aquele que foi adicionado por último é o primeiro a ser retirado, esse conceito também é conhecido como LIFO (Last In, First Out).<br><br>"
-                    + "O conceito de pilha é aplicado nos frascos do jogo, somente a camada de cima passa para outro frasco e a camada de cima é a última a ser colocada, e é exatamente assim que uma pilha funciona.<br><br>"
-                    + "A única diferença é que no nosso jogo, se os nós do topo forem iguais eles vão juntos para a outra pilha, ou seja, se o líquido de uma certa cor no topo de um frasco ocupar mais de 1 nível, quando ele for passado para outro frasco todos os níveis do líquido serão passados</p>");
-            b_voltar.setBounds(370, 450, 120, 40);
+    private void mensagem(int instrucoes) {
+        switch (instrucoes) {
+            case 0 -> {
+                l_tituloMSG.setText("Instruções");
+                l_texto.setText("<html><p align=\"justify\">Em Water Sort Puzzle você deve organizar a água colorida dentro dos frascos<br><br>"
+                        + "- OBJETIVO:<br>Separar as cores para que cada cor fique em um frasco diferente<br><br>"
+                        + "- MECÂNICA:<br>Clique com o botão esquerdo do mouse em um frasco para selecioná-lo, ele começará a seguir o seu mouse, clique em outro frasco e a camada superior de líquido do 1º passará para o 2º<br><br>"
+                        + "- LIMITES:<br>Cada frasco suporta no máximo 4 níveis de líquido, pode tentar por mais, só um aviso: você não vai conseguir ;)<br><br>"
+                        + "- <I>OPS</i>, CLIQUEI ERRADO:<br>Se você selecionar um frasco que não queria selecionar, simplesmente clique em qualquer lugar (dentro da janela do jogo) com o botão direito do mouse<br><br>"
+                        + "- DESFAZER UM MOVIMENTO<br>Caso você tenha colocado água no frasco errado, pode desfazer o movimento clicando no botão DESFAZER, que pode ser usado 5 vezes</p>");
+                b_voltar.setBounds(10, 450, 120, 40);
+            }
+            case 1 -> {
+                l_tituloMSG.setText("Conceitos Utilizados");
+                l_texto.setText("<html><p align=\"justify\">Em nosso jogo utilizamos o conceito de Pilha, no qual aquele que foi adicionado por último é o primeiro a ser retirado, esse conceito também é conhecido como LIFO (Last In, First Out).<br><br>"
+                        + "O conceito de pilha é aplicado nos frascos do jogo, somente a camada de cima passa para outro frasco e a camada de cima é a última a ser colocada, e é exatamente assim que uma pilha funciona<br><br>"
+                        + "A única diferença é que no nosso jogo, se os nós do topo forem iguais eles vão juntos para a outra pilha, ou seja, se o líquido de uma certa cor no topo de um frasco ocupar mais de 1 nível, quando ele for passado para outro frasco todos os níveis do líquido serão passados</p>");
+                b_voltar.setBounds(370, 450, 120, 40);
+            }
+            case 2 -> {
+                l_tituloMSG.setText("Como Criar Fases");
+                l_texto.setText("<html><p align=\"justify\">As mecânicas do jogo mudam no Level Maker<br><br>"
+                        + "- ESTADO INICIAL:<br>Ao iniciar a criação você vai se deparar com frascos cheios e homogêneos, óbvio, o início da criação é o estado final do jogo normal, você vai precisar embaralhar esses frascos até estar satisfeito com o resultado<br><br>"
+                        + "- MOVIMENTAÇÃO DE LÍQUIDOS:<br>Diferentemente do jogo padrão, no Level Maker somente o nível superior de líquido é passado de um frasco a outro<br><br>"
+                        + "- LIMITAÇÕES:<br>Para nos certificarmos que todas as fases criadas tenham solução, não é possível colocar um líquido em cima de outro que tenha a mesma cor<br><br>"
+                        + "- EXCEÇÃO:<br>Você só pode empilhar líquidos de mesma cor se eles vierem do mesmo frasco e forem da mesma sequência</p>");
+                b_voltar.setBounds(10, 450, 120, 40);
+            }
+            default -> {}
         }
         tela("mensagens");
     }
@@ -306,7 +320,7 @@ public class JogoDasGarrafas1 extends javax.swing.JFrame {
                     arrastar(evt, lm);
                 }
             });
-            p_gameplay.add(garrafas[i]);
+            lp_gameplay.add(garrafas[i]);
             posicionamento(garrafas, i);
             for (int j = 0; j < 2; j++) {
                 String carac = "" + caracteres.indexOf(fase.charAt(i * 2 + j));
@@ -340,7 +354,7 @@ public class JogoDasGarrafas1 extends javax.swing.JFrame {
                         arrastar(evt, true);
                     }
                 });
-                p_gameplay.add(garrafas[i]);
+                lp_gameplay.add(garrafas[i]);
                 posicionamento(garrafas, i);
                 garrafas[i].lockPos(garrafas[i].getLocation().x, garrafas[i].getLocation().y);
             }
@@ -574,7 +588,7 @@ public class JogoDasGarrafas1 extends javax.swing.JFrame {
         l_tituloMSG = new javax.swing.JLabel();
         l_texto = new javax.swing.JLabel();
         b_voltar = new javax.swing.JButton();
-        p_gameplay = new javax.swing.JPanel();
+        lp_gameplay = new javax.swing.JLayeredPane();
         t_codigo = new javax.swing.JTextField();
         l_codigo = new javax.swing.JLabel();
         b_menu = new javax.swing.JButton();
@@ -584,6 +598,7 @@ public class JogoDasGarrafas1 extends javax.swing.JFrame {
         l_descricao = new javax.swing.JLabel();
         b_iniciar = new javax.swing.JButton();
         b_voltarLM = new javax.swing.JButton();
+        b_instrucoesLM = new javax.swing.JButton();
         l_vermelho = new javax.swing.JLabel();
         s_vermelho = new javax.swing.JSpinner();
         l_laranja = new javax.swing.JLabel();
@@ -722,19 +737,16 @@ public class JogoDasGarrafas1 extends javax.swing.JFrame {
 
         p_principal.add(p_mensagens, "mensagens");
 
-        p_gameplay.setMinimumSize(new java.awt.Dimension(500, 500));
-        p_gameplay.setLayout(null);
-
         t_codigo.setEditable(false);
         t_codigo.setBackground(new java.awt.Color(214, 217, 223));
         t_codigo.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         t_codigo.setOpaque(true);
-        p_gameplay.add(t_codigo);
+        lp_gameplay.add(t_codigo);
         t_codigo.setBounds(0, 30, 500, 30);
 
         l_codigo.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         l_codigo.setText("Código gerado:");
-        p_gameplay.add(l_codigo);
+        lp_gameplay.add(l_codigo);
         l_codigo.setBounds(0, 10, 500, 20);
 
         b_menu.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
@@ -745,7 +757,7 @@ public class JogoDasGarrafas1 extends javax.swing.JFrame {
                 b_menuActionPerformed(evt);
             }
         });
-        p_gameplay.add(b_menu);
+        lp_gameplay.add(b_menu);
         b_menu.setBounds(370, 450, 120, 40);
 
         b_desfazer.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
@@ -756,10 +768,10 @@ public class JogoDasGarrafas1 extends javax.swing.JFrame {
                 b_desfazerActionPerformed(evt);
             }
         });
-        p_gameplay.add(b_desfazer);
+        lp_gameplay.add(b_desfazer);
         b_desfazer.setBounds(10, 450, 120, 40);
 
-        p_principal.add(p_gameplay, "gameplay");
+        p_principal.add(lp_gameplay, "gameplay");
 
         p_tituloLM.setLayout(null);
 
@@ -796,6 +808,18 @@ public class JogoDasGarrafas1 extends javax.swing.JFrame {
         });
         p_tituloLM.add(b_voltarLM);
         b_voltarLM.setBounds(190, 450, 120, 40);
+
+        b_instrucoesLM.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        b_instrucoesLM.setText("COMO CRIAR");
+        b_instrucoesLM.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        b_instrucoesLM.setFocusable(false);
+        b_instrucoesLM.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                b_instrucoesLMActionPerformed(evt);
+            }
+        });
+        p_tituloLM.add(b_instrucoesLM);
+        b_instrucoesLM.setBounds(10, 450, 120, 40);
 
         l_vermelho.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         l_vermelho.setText("Vermelho");
@@ -970,7 +994,7 @@ public class JogoDasGarrafas1 extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void b_instrucoesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_b_instrucoesActionPerformed
-        mensagem(true);
+        mensagem(0);
     }//GEN-LAST:event_b_instrucoesActionPerformed
 
     private void b_voltarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_b_voltarActionPerformed
@@ -978,7 +1002,7 @@ public class JogoDasGarrafas1 extends javax.swing.JFrame {
     }//GEN-LAST:event_b_voltarActionPerformed
 
     private void b_conceitosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_b_conceitosActionPerformed
-        mensagem(false);
+        mensagem(1);
     }//GEN-LAST:event_b_conceitosActionPerformed
 
     private void b_jogarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_b_jogarActionPerformed
@@ -1033,6 +1057,10 @@ public class JogoDasGarrafas1 extends javax.swing.JFrame {
         for (var spinner : spinners)
             spinner.setModel(new javax.swing.SpinnerNumberModel((int) spinner.getValue(), (spinner.equals(s_vazios) ? 1 : 0), 24 - tam + (int) spinner.getValue(), 1));
     }//GEN-LAST:event_spinnersStateChanged
+
+    private void b_instrucoesLMActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_b_instrucoesLMActionPerformed
+        mensagem(2);
+    }//GEN-LAST:event_b_instrucoesLMActionPerformed
 //</editor-fold>
 
     public static void main(String args[]) {
@@ -1079,6 +1107,7 @@ public class JogoDasGarrafas1 extends javax.swing.JFrame {
     private javax.swing.JButton b_desfazer;
     private javax.swing.JButton b_iniciar;
     private javax.swing.JButton b_instrucoes;
+    private javax.swing.JButton b_instrucoesLM;
     private javax.swing.JButton b_jogar;
     private javax.swing.JButton b_menu;
     private javax.swing.JButton b_voltar;
@@ -1103,7 +1132,7 @@ public class JogoDasGarrafas1 extends javax.swing.JFrame {
     private javax.swing.JLabel l_verdeC;
     private javax.swing.JLabel l_vermelho;
     private javax.swing.JLabel l_verzul;
-    private javax.swing.JPanel p_gameplay;
+    private javax.swing.JLayeredPane lp_gameplay;
     private javax.swing.JPanel p_mensagens;
     private javax.swing.JPanel p_principal;
     private javax.swing.JPanel p_titulo;
