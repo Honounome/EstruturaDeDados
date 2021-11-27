@@ -232,6 +232,7 @@ public class JogoDasGarrafas1 extends javax.swing.JFrame {
                     
                     if (check()) {
                         if (codigo.vazio()) {
+                            tela("vitoria");
                             tocarSom("vitoria");
                         } else {
                             tocarSom("prox");
@@ -257,7 +258,7 @@ public class JogoDasGarrafas1 extends javax.swing.JFrame {
     
     private void mensagem(int instrucoes) {
         switch (instrucoes) {
-            case 0 -> {
+            case 0 : {
                 l_tituloMSG.setText("Instruções");
                 l_texto.setText("<html><p align=\"justify\">Em Water Sort Puzzle você deve organizar a água colorida dentro dos frascos<br><br>"
                         + "- OBJETIVO:<br>Separar as cores para que cada cor fique em um frasco diferente<br><br>"
@@ -266,15 +267,15 @@ public class JogoDasGarrafas1 extends javax.swing.JFrame {
                         + "- <I>OPS</i>, CLIQUEI ERRADO:<br>Se você selecionar um frasco que não queria selecionar, simplesmente clique em qualquer lugar (dentro da janela do jogo) com o botão direito do mouse<br><br>"
                         + "- DESFAZER UM MOVIMENTO<br>Caso você tenha colocado água no frasco errado, pode desfazer o movimento clicando no botão DESFAZER, que pode ser usado 5 vezes</p>");
                 b_voltar.setBounds(10, 450, 120, 40);
-            }
-            case 1 -> {
+            }break;
+            case 1 : {
                 l_tituloMSG.setText("Conceitos Utilizados");
                 l_texto.setText("<html><p align=\"justify\">Em nosso jogo utilizamos o conceito de Pilha, no qual aquele que foi adicionado por último é o primeiro a ser retirado, esse conceito também é conhecido como LIFO (Last In, First Out).<br><br>"
                         + "O conceito de pilha é aplicado nos frascos do jogo, somente a camada de cima passa para outro frasco e a camada de cima é a última a ser colocada, e é exatamente assim que uma pilha funciona<br><br>"
                         + "A única diferença é que no nosso jogo, se os nós do topo forem iguais eles vão juntos para a outra pilha, ou seja, se o líquido de uma certa cor no topo de um frasco ocupar mais de 1 nível, quando ele for passado para outro frasco todos os níveis do líquido serão passados</p>");
                 b_voltar.setBounds(370, 450, 120, 40);
-            }
-            case 2 -> {
+            }break;
+            case 2 : {
                 l_tituloMSG.setText("Como Criar Fases");
                 l_texto.setText("<html><p align=\"justify\">As mecânicas do jogo mudam no Level Maker<br><br>"
                         + "- ESTADO INICIAL:<br>Ao iniciar a criação você vai se deparar com frascos cheios e homogêneos, óbvio, o início da criação é o estado final do jogo normal, você vai precisar embaralhar esses frascos até estar satisfeito com o resultado<br><br>"
@@ -282,8 +283,8 @@ public class JogoDasGarrafas1 extends javax.swing.JFrame {
                         + "- LIMITAÇÕES:<br>Para nos certificarmos que todas as fases criadas tenham solução, não é possível colocar um líquido em cima de outro que tenha a mesma cor<br><br>"
                         + "- EXCEÇÃO:<br>Você só pode empilhar líquidos de mesma cor se eles vierem do mesmo frasco e forem da mesma sequência</p>");
                 b_voltar.setBounds(10, 450, 120, 40);
-            }
-            default -> {}
+            }break;
+            default : {}break;
         }
         tela("mensagens");
     }
@@ -620,6 +621,8 @@ public class JogoDasGarrafas1 extends javax.swing.JFrame {
         l_total = new javax.swing.JLabel();
         l_vazios = new javax.swing.JLabel();
         s_vazios = new javax.swing.JSpinner();
+        p_vitoria = new javax.swing.JPanel();
+        labelVitoria = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setMinimumSize(new java.awt.Dimension(500, 500));
@@ -644,7 +647,7 @@ public class JogoDasGarrafas1 extends javax.swing.JFrame {
 
         b_conceitos.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         b_conceitos.setText("CONCEITOS");
-        b_conceitos.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        b_conceitos.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         b_conceitos.setFocusable(false);
         b_conceitos.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -656,7 +659,7 @@ public class JogoDasGarrafas1 extends javax.swing.JFrame {
 
         b_jogar.setFont(new java.awt.Font("Arial Rounded MT Bold", 0, 36)); // NOI18N
         b_jogar.setText("JOGAR");
-        b_jogar.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        b_jogar.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         b_jogar.setFocusable(false);
         b_jogar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -668,7 +671,7 @@ public class JogoDasGarrafas1 extends javax.swing.JFrame {
 
         b_instrucoes.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         b_instrucoes.setText("COMO JOGAR");
-        b_instrucoes.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        b_instrucoes.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         b_instrucoes.setFocusable(false);
         b_instrucoes.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -680,7 +683,7 @@ public class JogoDasGarrafas1 extends javax.swing.JFrame {
 
         b_criacao.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         b_criacao.setText("CRIAR");
-        b_criacao.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        b_criacao.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         b_criacao.setFocusable(false);
         b_criacao.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -693,7 +696,7 @@ public class JogoDasGarrafas1 extends javax.swing.JFrame {
         l_insira.setForeground(java.awt.Color.lightGray);
         l_insira.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         l_insira.setText("Insira um código");
-        l_insira.setCursor(new java.awt.Cursor(java.awt.Cursor.TEXT_CURSOR));
+        l_insira.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         l_insira.setFocusable(false);
         p_titulo.add(l_insira);
         l_insira.setBounds(0, 250, 500, 20);
@@ -725,7 +728,7 @@ public class JogoDasGarrafas1 extends javax.swing.JFrame {
 
         b_voltar.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         b_voltar.setText("VOLTAR");
-        b_voltar.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        b_voltar.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         b_voltar.setFocusable(false);
         b_voltar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -740,7 +743,6 @@ public class JogoDasGarrafas1 extends javax.swing.JFrame {
         t_codigo.setEditable(false);
         t_codigo.setBackground(new java.awt.Color(214, 217, 223));
         t_codigo.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        t_codigo.setOpaque(true);
         lp_gameplay.add(t_codigo);
         t_codigo.setBounds(0, 30, 500, 30);
 
@@ -799,7 +801,7 @@ public class JogoDasGarrafas1 extends javax.swing.JFrame {
 
         b_voltarLM.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         b_voltarLM.setText("VOLTAR");
-        b_voltarLM.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        b_voltarLM.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         b_voltarLM.setFocusable(false);
         b_voltarLM.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -811,7 +813,7 @@ public class JogoDasGarrafas1 extends javax.swing.JFrame {
 
         b_instrucoesLM.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         b_instrucoesLM.setText("COMO CRIAR");
-        b_instrucoesLM.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        b_instrucoesLM.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         b_instrucoesLM.setFocusable(false);
         b_instrucoesLM.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -824,7 +826,7 @@ public class JogoDasGarrafas1 extends javax.swing.JFrame {
         l_vermelho.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         l_vermelho.setText("Vermelho");
         p_tituloLM.add(l_vermelho);
-        l_vermelho.setBounds(10, 310, 60, 16);
+        l_vermelho.setBounds(10, 310, 60, 14);
 
         s_vermelho.setModel(new javax.swing.SpinnerNumberModel(0, 0, 23, 1));
         s_vermelho.setFocusable(false);
@@ -839,7 +841,7 @@ public class JogoDasGarrafas1 extends javax.swing.JFrame {
         l_laranja.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         l_laranja.setText("Laranja");
         p_tituloLM.add(l_laranja);
-        l_laranja.setBounds(80, 310, 60, 16);
+        l_laranja.setBounds(80, 310, 60, 14);
 
         s_laranja.setModel(new javax.swing.SpinnerNumberModel(0, 0, 23, 1));
         s_laranja.setFocusable(false);
@@ -854,7 +856,7 @@ public class JogoDasGarrafas1 extends javax.swing.JFrame {
         l_verdeC.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         l_verdeC.setText("Verde C.");
         p_tituloLM.add(l_verdeC);
-        l_verdeC.setBounds(150, 310, 60, 16);
+        l_verdeC.setBounds(150, 310, 60, 14);
 
         s_verdeC.setModel(new javax.swing.SpinnerNumberModel(0, 0, 23, 1));
         s_verdeC.setFocusable(false);
@@ -869,7 +871,7 @@ public class JogoDasGarrafas1 extends javax.swing.JFrame {
         l_verde.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         l_verde.setText("Verde");
         p_tituloLM.add(l_verde);
-        l_verde.setBounds(290, 310, 60, 16);
+        l_verde.setBounds(290, 310, 60, 14);
 
         s_verde.setModel(new javax.swing.SpinnerNumberModel(0, 0, 23, 1));
         s_verde.setFocusable(false);
@@ -884,7 +886,7 @@ public class JogoDasGarrafas1 extends javax.swing.JFrame {
         l_verzul.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         l_verzul.setText("Verzul");
         p_tituloLM.add(l_verzul);
-        l_verzul.setBounds(360, 310, 60, 16);
+        l_verzul.setBounds(360, 310, 60, 14);
 
         s_verzul.setModel(new javax.swing.SpinnerNumberModel(0, 0, 23, 1));
         s_verzul.setFocusable(false);
@@ -899,7 +901,7 @@ public class JogoDasGarrafas1 extends javax.swing.JFrame {
         l_azul.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         l_azul.setText("Azul");
         p_tituloLM.add(l_azul);
-        l_azul.setBounds(430, 310, 60, 16);
+        l_azul.setBounds(430, 310, 60, 14);
 
         s_azul.setModel(new javax.swing.SpinnerNumberModel(0, 0, 23, 1));
         s_azul.setFocusable(false);
@@ -914,7 +916,7 @@ public class JogoDasGarrafas1 extends javax.swing.JFrame {
         l_azulE.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         l_azulE.setText("Azul E.");
         p_tituloLM.add(l_azulE);
-        l_azulE.setBounds(10, 370, 60, 16);
+        l_azulE.setBounds(10, 370, 60, 14);
 
         s_azulE.setModel(new javax.swing.SpinnerNumberModel(0, 0, 23, 1));
         s_azulE.setFocusable(false);
@@ -929,7 +931,7 @@ public class JogoDasGarrafas1 extends javax.swing.JFrame {
         l_roxo.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         l_roxo.setText("Roxo");
         p_tituloLM.add(l_roxo);
-        l_roxo.setBounds(80, 370, 60, 16);
+        l_roxo.setBounds(80, 370, 60, 14);
 
         s_roxo.setModel(new javax.swing.SpinnerNumberModel(0, 0, 23, 1));
         s_roxo.setFocusable(false);
@@ -944,7 +946,7 @@ public class JogoDasGarrafas1 extends javax.swing.JFrame {
         l_rosa.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         l_rosa.setText("Rosa");
         p_tituloLM.add(l_rosa);
-        l_rosa.setBounds(360, 370, 60, 16);
+        l_rosa.setBounds(360, 370, 60, 14);
 
         s_rosa.setModel(new javax.swing.SpinnerNumberModel(0, 0, 23, 1));
         s_rosa.setFocusable(false);
@@ -959,12 +961,12 @@ public class JogoDasGarrafas1 extends javax.swing.JFrame {
         l_total.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         l_total.setText("<html><p align=\"center\">Total:<br>1</p>");
         p_tituloLM.add(l_total);
-        l_total.setBounds(230, 310, 40, 32);
+        l_total.setBounds(230, 310, 40, 28);
 
         l_vazios.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         l_vazios.setText("Vazios");
         p_tituloLM.add(l_vazios);
-        l_vazios.setBounds(430, 370, 60, 16);
+        l_vazios.setBounds(430, 370, 60, 14);
 
         s_vazios.setModel(new javax.swing.SpinnerNumberModel(1, 1, 24, 1));
         s_vazios.setFocusable(false);
@@ -977,6 +979,16 @@ public class JogoDasGarrafas1 extends javax.swing.JFrame {
         s_vazios.setBounds(430, 390, 60, 25);
 
         p_principal.add(p_tituloLM, "tituloLM");
+
+        p_vitoria.setLayout(null);
+
+        labelVitoria.setFont(new java.awt.Font("Monotype Corsiva", 1, 65)); // NOI18N
+        labelVitoria.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        labelVitoria.setText("Você venceu!");
+        p_vitoria.add(labelVitoria);
+        labelVitoria.setBounds(0, 180, 500, 140);
+
+        p_principal.add(p_vitoria, "vitoria");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -1132,11 +1144,13 @@ public class JogoDasGarrafas1 extends javax.swing.JFrame {
     private javax.swing.JLabel l_verdeC;
     private javax.swing.JLabel l_vermelho;
     private javax.swing.JLabel l_verzul;
+    private javax.swing.JLabel labelVitoria;
     private javax.swing.JLayeredPane lp_gameplay;
     private javax.swing.JPanel p_mensagens;
     private javax.swing.JPanel p_principal;
     private javax.swing.JPanel p_titulo;
     private javax.swing.JPanel p_tituloLM;
+    private javax.swing.JPanel p_vitoria;
     private javax.swing.JSpinner s_azul;
     private javax.swing.JSpinner s_azulE;
     private javax.swing.JSpinner s_laranja;
