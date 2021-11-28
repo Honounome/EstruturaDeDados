@@ -92,7 +92,7 @@
                 </Property>
                 <Property name="text" type="java.lang.String" value="CONCEITOS"/>
                 <Property name="cursor" type="java.awt.Cursor" editor="org.netbeans.modules.form.editors2.CursorEditor">
-                  <Color id="Cursor Padr&#xe3;o"/>
+                  <Color id="Default Cursor"/>
                 </Property>
                 <Property name="focusable" type="boolean" value="false"/>
               </Properties>
@@ -112,7 +112,7 @@
                 </Property>
                 <Property name="text" type="java.lang.String" value="JOGAR"/>
                 <Property name="cursor" type="java.awt.Cursor" editor="org.netbeans.modules.form.editors2.CursorEditor">
-                  <Color id="Cursor Padr&#xe3;o"/>
+                  <Color id="Default Cursor"/>
                 </Property>
                 <Property name="focusable" type="boolean" value="false"/>
               </Properties>
@@ -132,7 +132,7 @@
                 </Property>
                 <Property name="text" type="java.lang.String" value="COMO JOGAR"/>
                 <Property name="cursor" type="java.awt.Cursor" editor="org.netbeans.modules.form.editors2.CursorEditor">
-                  <Color id="Cursor Padr&#xe3;o"/>
+                  <Color id="Default Cursor"/>
                 </Property>
                 <Property name="focusable" type="boolean" value="false"/>
               </Properties>
@@ -152,7 +152,7 @@
                 </Property>
                 <Property name="text" type="java.lang.String" value="CRIAR"/>
                 <Property name="cursor" type="java.awt.Cursor" editor="org.netbeans.modules.form.editors2.CursorEditor">
-                  <Color id="Cursor Padr&#xe3;o"/>
+                  <Color id="Default Cursor"/>
                 </Property>
                 <Property name="focusable" type="boolean" value="false"/>
               </Properties>
@@ -173,7 +173,7 @@
                 <Property name="horizontalAlignment" type="int" value="0"/>
                 <Property name="text" type="java.lang.String" value="Insira um c&#xf3;digo"/>
                 <Property name="cursor" type="java.awt.Cursor" editor="org.netbeans.modules.form.editors2.CursorEditor">
-                  <Color id="Cursor Padr&#xe3;o"/>
+                  <Color id="Default Cursor"/>
                 </Property>
                 <Property name="focusable" type="boolean" value="false"/>
               </Properties>
@@ -196,11 +196,11 @@
             <Component class="javax.swing.JLabel" name="l_instrucoes">
               <Properties>
                 <Property name="horizontalAlignment" type="int" value="0"/>
-                <Property name="text" type="java.lang.String" value="&lt;html&gt;&lt;p align=&quot;center&quot;&gt;No campo abaixo voc&#xea; pode inserir um c&#xf3;digo de fase.&lt;br&gt;Voc&#xea; tamb&#xe9;m pode deix&#xe1;-lo em branco e jogar 10 fases que n&#xf3;s fizemos&lt;/p&gt;"/>
+                <Property name="text" type="java.lang.String" value="&lt;html&gt;&lt;p align=&quot;center&quot;&gt;No campo abaixo voc&#xea; pode inserir um c&#xf3;digo de fase&lt;br&gt;(voc&#xea; pode criar um c&#xf3;digo no Level Maker - experimente clicar no bot&#xe3;o CRIAR)&lt;br&gt;Voc&#xea; tamb&#xe9;m pode deix&#xe1;-lo em branco e jogar 10 fases que n&#xf3;s fizemos&lt;/p&gt;"/>
               </Properties>
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                  <AbsoluteConstraints x="0" y="200" width="500" height="40"/>
+                  <AbsoluteConstraints x="0" y="180" width="500" height="60"/>
                 </Constraint>
               </Constraints>
             </Component>
@@ -243,7 +243,7 @@
               </Properties>
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                  <AbsoluteConstraints x="20" y="90" width="460" height="350"/>
+                  <AbsoluteConstraints x="10" y="80" width="480" height="360"/>
                 </Constraint>
               </Constraints>
             </Component>
@@ -254,7 +254,7 @@
                 </Property>
                 <Property name="text" type="java.lang.String" value="VOLTAR"/>
                 <Property name="cursor" type="java.awt.Cursor" editor="org.netbeans.modules.form.editors2.CursorEditor">
-                  <Color id="Cursor Padr&#xe3;o"/>
+                  <Color id="Default Cursor"/>
                 </Property>
                 <Property name="focusable" type="boolean" value="false"/>
               </Properties>
@@ -283,9 +283,6 @@
             <Component class="javax.swing.JTextField" name="t_codigo">
               <Properties>
                 <Property name="editable" type="boolean" value="false"/>
-                <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-                  <Color blue="df" green="d9" red="d6" type="rgb"/>
-                </Property>
                 <Property name="horizontalAlignment" type="int" value="0"/>
               </Properties>
               <Constraints>
@@ -401,7 +398,7 @@
                 </Property>
                 <Property name="text" type="java.lang.String" value="VOLTAR"/>
                 <Property name="cursor" type="java.awt.Cursor" editor="org.netbeans.modules.form.editors2.CursorEditor">
-                  <Color id="Cursor Padr&#xe3;o"/>
+                  <Color id="Default Cursor"/>
                 </Property>
                 <Property name="focusable" type="boolean" value="false"/>
               </Properties>
@@ -421,7 +418,7 @@
                 </Property>
                 <Property name="text" type="java.lang.String" value="COMO CRIAR"/>
                 <Property name="cursor" type="java.awt.Cursor" editor="org.netbeans.modules.form.editors2.CursorEditor">
-                  <Color id="Cursor Padr&#xe3;o"/>
+                  <Color id="Default Cursor"/>
                 </Property>
                 <Property name="focusable" type="boolean" value="false"/>
               </Properties>
@@ -728,7 +725,7 @@
             <Property name="useNullLayout" type="boolean" value="true"/>
           </Layout>
           <SubComponents>
-            <Component class="javax.swing.JLabel" name="labelVitoria">
+            <Component class="javax.swing.JLabel" name="l_vitoria">
               <Properties>
                 <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
                   <Font name="Monotype Corsiva" size="65" style="1"/>
@@ -739,6 +736,18 @@
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
                   <AbsoluteConstraints x="0" y="180" width="500" height="140"/>
+                </Constraint>
+              </Constraints>
+            </Component>
+            <Component class="javax.swing.JLabel" name="l_confete">
+              <Properties>
+                <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+                  <Image iconType="3" name="/pilha/midia/confetti-25.gif"/>
+                </Property>
+              </Properties>
+              <Constraints>
+                <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
+                  <AbsoluteConstraints x="0" y="0" width="500" height="500"/>
                 </Constraint>
               </Constraints>
             </Component>
